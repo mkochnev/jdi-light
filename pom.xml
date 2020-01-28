@@ -62,5 +62,6 @@
         <module>jdi-light-applitools-tests</module>
         <module>selenium-to-jdi-applitools</module>
         <module>visual-challenge</module>
+        <module>jdi-mobile-dummy-test</module>
     </modules>
 </project>
