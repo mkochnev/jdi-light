@@ -23,7 +23,7 @@ import static org.testng.Assert.fail;
 
 public class ButtonTests extends TestsInit {
 
-    private String text = "Red button";
+    final String text = "Red button";
 
     @BeforeMethod
     public void before() {
@@ -70,6 +70,7 @@ public class ButtonTests extends TestsInit {
         redButton.rightClick();
         validateAlert(is("Right Click"));
     }
+
     @Test
     public void isValidationTest() {
         redButton.is().displayed();

@@ -8,7 +8,6 @@ import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.interfaces.base.HasUIList;
-import com.epam.jdi.light.elements.interfaces.base.IListBase;
 import com.epam.jdi.light.elements.interfaces.base.SetValue;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.func.JAction1;
@@ -27,6 +26,7 @@ import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.TextTypes.INDEX;
 import static com.epam.jdi.light.common.TextTypes.SMART_LIST;
 import static com.epam.jdi.light.driver.WebDriverByUtils.shortBy;
+import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.getByType;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
@@ -426,7 +426,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     @JDIAction("Get '{name}' checked values")
     public List<String> checked() {
-        return ifSelect(IListBase::isSelected, this::getElementName);
+        return ifSelect(ui -> getByType(ui, CanBeSelected.class).isSelected(), this::getElementName);
     }
 
     @JDIAction("Get '{name}' values")
@@ -443,12 +443,12 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     @JDIAction("Get list of enabled values for '{name}'")
     public List<String> listEnabled() {
-        return noValidation(() -> ifSelect(IListBase::isEnabled, this::getElementName));
+        return noValidation(() -> ifSelect(ui -> getByType(ui, CanBeSelected.class).isSelected(), this::getElementName));
     }
 
     @JDIAction("Get list of disabled values for '{name}'")
     public List<String> listDisabled() {
-        return noValidation(() -> ifSelect(IListBase::isDisabled, this::getElementName));
+        return noValidation(() -> ifSelect(UIElement::isSelected, this::getElementName));
     }
 
     @JDIAction(value = "Check that '{name}' is displayed", timeout = 0)
@@ -478,7 +478,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     @JDIAction(level = DEBUG)
     public void highlight() {
-        foreach(IListBase::highlight);
+        foreach(UIElement::highlight);
     }
     @JDIAction(level = DEBUG)
     public void hover() {

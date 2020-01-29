@@ -15,6 +15,7 @@ public interface CommonAssert<A> extends JAssert, HasAssert<A> {
     A notAppear(int timeoutSec);
     A enabled();
     A disabled();
+    A visible();
 
     default A and() { return (A) this; }
     default A condition(JFunc1<A, A> t) {

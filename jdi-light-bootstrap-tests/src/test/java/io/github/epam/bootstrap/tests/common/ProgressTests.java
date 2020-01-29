@@ -24,6 +24,7 @@ public class ProgressTests extends TestsInit {
     public void getValueTest() {
         assertThat(progressbar.value(), is("25%"));
     }
+
     @Test
     public void dynamicValueTest() {
         increaseProgress.click();
@@ -32,14 +33,17 @@ public class ProgressTests extends TestsInit {
         decreaseProgress.click();
         assertThat(progressbar.value(), is("20%"));
     }
+
     @Test
     public void minTest() {
         assertThat(progressbar.min(), is(0));
     }
+
     @Test
     public void maxTest() {
         assertThat(progressbar.max(), is(100));
     }
+
     @Test
     public void isValidationTest() {
         progressbar.is().displayed().enabled().value("25%");

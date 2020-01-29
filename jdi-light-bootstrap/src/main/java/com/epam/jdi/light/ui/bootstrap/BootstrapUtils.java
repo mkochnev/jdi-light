@@ -8,39 +8,6 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
 public class BootstrapUtils {
-    public static int getInt(String attr, WebElement el) {
-        String value = el.getAttribute(attr);
-        try {
-            return parseInt(value);
-        } catch (Exception ex) {
-            throw exception(ex, "Can't parse attribute '%s=%s' to Integer", attr, value);
-        }
-    }
-
-    public static double getDouble(String attr, WebElement el) {
-        String value = el.getAttribute(attr);
-        try {
-            return parseDouble(value);
-        } catch (Exception ex) {
-            throw exception(ex, "Can't parse attribute '%s=%s' to Double", attr, value);
-        }
-    }
-
-    public static int asInt(String value) {
-        try {
-            return parseInt(value);
-        } catch (Exception ex) {
-            throw exception(ex, "Can't parse value %s to Integer", value);
-        }
-    }
-
-    public static double asDouble(String value) {
-        try {
-            return parseDouble(value);
-        } catch (Exception ex) {
-            throw exception(ex, "Can't parse value %s to Double", value);
-        }
-    }
 
     public static Boolean isElementInViewPort(UIElement element) {
         String script = "var elem = arguments[0],                 " +

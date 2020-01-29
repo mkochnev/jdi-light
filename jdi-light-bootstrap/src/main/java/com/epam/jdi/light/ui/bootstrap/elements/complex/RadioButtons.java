@@ -16,7 +16,7 @@ public class RadioButtons extends com.epam.jdi.light.ui.html.elements.complex.Ra
 
     @Override
     public WebList list() {
-        WebList radioBtnWebList = new WebList(base()).setup(jdiB -> jdiB.setSearchRule(ANY_ELEMENT))
+        WebList radioBtnWebList = new WebList(base()).setup(jdiB -> jdiB.setSearchRule("Any", ANY_ELEMENT))
                 .setUIElementName(LABEL);
         // TODO REFACTOR
         //radioBtnWebList.setClickArea(ACTION_CLICK);
@@ -24,7 +24,7 @@ public class RadioButtons extends com.epam.jdi.light.ui.html.elements.complex.Ra
     }
 
     public WebList list(JFunc1<WebElement, Boolean> searchRule, ElementArea elementArea) {
-        WebList radioBtnWebList = new WebList(base()).setup(jdiB -> jdiB.setSearchRule(searchRule))
+        WebList radioBtnWebList = new WebList(base()).setup(jdiB -> jdiB.setSearchRule("UNDEFINED", searchRule))
                 .setUIElementName(LABEL);
         // TODO REFACTOR
         //radioBtnWebList.setClickArea(elementArea);

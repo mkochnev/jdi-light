@@ -6,6 +6,7 @@ import com.epam.jdi.light.common.ElementArea;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
+import com.epam.jdi.light.elements.complex.CanBeSelected;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.interfaces.base.*;
 import com.epam.jdi.light.elements.interfaces.common.IsInput;
@@ -53,8 +54,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
 public class UIElement extends JDIBase
-        implements WebElement, SetValue, HasAssert<IsAssert>, IListBase,
-        HasClick, IsText, HasLabel, HasPlaceholder, IsInput, HasCheck {
+        implements WebElement, SetValue, HasAssert<IsAssert>,
+        HasClick, IsText, HasLabel, HasPlaceholder, IsInput, HasCheck, CanBeSelected {
     //region Constructors
     public UIElement() { }
     public UIElement(WebElement el) { setWebElement(el); }
@@ -145,9 +146,13 @@ public class UIElement extends JDIBase
      * Check that element is selected
      * @return boolean
      */
+    @Override
     @JDIAction(value = "Check that '{name}' is selected", timeout = 0)
     public boolean isSelected() {
-        return selected();
+        if (getWebElement().isSelected())
+            return true;
+        return hasClass("checked") || hasClass("active")||
+                hasClass("selected") || attr("checked").equals("true");
     }
 
     /**
@@ -314,6 +319,21 @@ public class UIElement extends JDIBase
     private RuntimeException getNotClickableException() {
         return exception("%s is not clickable in any parts. Maybe this element overlapped by some other element or locator is wrong", getName());
     }
+    public Boolean isVisible() {
+        if (!isDisplayed())
+            return false;
+        String script = "var elem = arguments[0],                 " +
+                "  box = elem.getBoundingClientRect(),    " +
+                "  cx = box.left + box.width / 2,         " +
+                "  cy = box.top + box.height / 2,         " +
+                "  e = document.elementFromPoint(cx, cy); " +
+                "for (; e; e = e.parentElement) {         " +
+                "  if (e === elem)                        " +
+                "    return true;                         " +
+                "}                                        " +
+                "return false;                            ";
+        return (Boolean) js().executeScript(script, getWebElement());
+    }
     private ElementArea getElementClickableArea() {
         return Switch().get(
             Case(t -> isClickable(), t-> CENTER),
@@ -388,7 +408,7 @@ public class UIElement extends JDIBase
      */
     @JDIAction(value = "Check that '{name}' is deselected", timeout = 0)
     public boolean isDeselected() {
-        return !selected();
+        return !isSelected();
     }
 
     /**
@@ -685,12 +705,6 @@ public class UIElement extends JDIBase
     //endregion
 
     //region Protected and private
-    protected boolean selected() {
-        if (getWebElement().isSelected())
-            return true;
-        return hasClass("checked") || hasClass("active")||
-            hasClass("selected") || attr("checked").equals("true");
-    }
     protected boolean enabled() {
         if (hasClass("active"))
             return true;

@@ -1,139 +1,100 @@
 package io.github.epam.bootstrap.tests.complex;
 
 import com.epam.jdi.light.elements.composite.WebPage;
+import io.github.com.entities.SlideInfo;
+import io.github.com.sections.Slide;
 import io.github.epam.TestsInit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static com.epam.jdi.light.elements.composite.WebPage.refresh;
 import static io.github.com.StaticSite.bsPage;
 import static io.github.com.pages.BootstrapPage.*;
-import static io.github.epam.bootstrap.tests.BaseValidationsUtils.durationMoreThan;
+import static io.github.com.pages.BootstrapPage.progressbar;
+import static io.github.epam.bootstrap.tests.BaseValidationsUtils.baseValidation;
 import static io.github.epam.states.States.shouldBeLoggedIn;
+import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.assertEquals;
 
 public class CarouselTests extends TestsInit {
-
-	private String nextText = "Next";
-	private String prevText = "Previous";
-	private String firstSlideText = "First slide";
-	private String secondSlideText = "Second slide";
-	private String thirdSlideText = "Third slide";
-	private String firstSlideFullText = firstSlideText + "\n" + prevText + "\n" + nextText;
-	private String secondSlideFullText = secondSlideText + "\n" + prevText + "\n" + nextText;
-	private String thirdSlideFullText = thirdSlideText + "\n" + prevText + "\n" + nextText;
-
-	private String firstSlideWithLabelText = firstSlideText + "\n" + "FIRST SLIDE LABEL\n"
-			+ "Nulla vitae elit libero, a pharetra augue mollis interdum.\n" + prevText + "\n" + nextText;
-	private String secondSlideWithLabelText = secondSlideText + "\n" + "SECOND SLIDE LABEL\n"
-			+ "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n" + prevText + "\n" + nextText;
-	private String thirdSlideWithLabelText = thirdSlideText + "\n" + "THIRD SLIDE LABEL\n"
-			+ "Praesent commodo cursus magna, vel scelerisque nisl consectetur.\n" + prevText + "\n" + nextText;
-	
-	private int interval = 5;
+	final String firstSlideText = "FIRST SLIDE LABEL[Wolverin:Nulla vitae elit libero, a pharetra augue mollis interdum.]";
+	final String secondSlideText = "SECOND SLIDE LABEL[Cyclope:Lorem ipsum dolor sit amet, consectetur adipiscing elit.]";
+	final String thirdSlideText = "THIRD SLIDE LABEL[Punisher:Praesent commodo cursus magna, vel scelerisque nisl consectetur.]";
 
 	@BeforeMethod
 	public void before() {
 		shouldBeLoggedIn();
 		bsPage.shouldBeOpened();
-		refresh();
-	}
-
-	// Carousel slides only tests
-	@Test
-	public void getSlidesTextTest() {
-		carouselWithSlidesOnly.is().text(firstSlideText);
-		carouselWithSlidesOnly.is().text(secondSlideText);
-	}
-
-	// Carousel with controls tests
-	@Test
-	public void prevTest() {
-		carouselWithControls.prev();
-		carouselWithControls.is().text(secondSlideFullText);
-
-		carouselWithControls.prev();
-		carouselWithControls.is().text(firstSlideFullText);
-
-		carouselWithControls.prevControl().is().text(prevText);
-	}
-
-	@Test
-	public void nextTest() {
-		carouselWithControls.next();
-		carouselWithControls.is().text(firstSlideFullText);
-
-		carouselWithControls.next();
-		carouselWithControls.is().text(secondSlideFullText);
-
-		carouselWithControls.nextControl().is().text(nextText);
-	}
-
-	// Carousel with indicators tests
-	@Test
-	public void selectTest() {
-		carouselWithIndicators.select(1);
-		carouselWithIndicators.is().text(firstSlideFullText);
-		carouselWithIndicators.get(1).is().selected();
-		carouselWithIndicators.get(2).is().deselected();
-
-		carouselWithIndicators.select(3);
-		carouselWithIndicators.is().text(thirdSlideFullText);
-		carouselWithIndicators.get(3).is().selected();
-		carouselWithIndicators.get(1).is().deselected();
-
-		carouselWithIndicators.select(2);
-		carouselWithIndicators.is().text(secondSlideFullText);
-		carouselWithIndicators.get(2).is().selected();
-		carouselWithIndicators.get(3).is().deselected();
-	}
-
-	// Carousel with captions tests
-	@Test
-	public void captionTest() {
-		carouselWithCaptions.select(1);
-		carouselWithCaptions.is().text(firstSlideWithLabelText);
-
-		carouselWithCaptions.select(2);
-		carouselWithCaptions.is().text(secondSlideWithLabelText);
-
-		carouselWithCaptions.select(3);
-		carouselWithCaptions.is().text(thirdSlideWithLabelText);
-	}
-
-	// Carousel fade tests
-	@Test
-	public void fadePrevTest() {
-		carouselWithFadeTransition.prev();
-		carouselWithFadeTransition.is().text(thirdSlideFullText);
-
-		carouselWithFadeTransition.prev();
-		carouselWithFadeTransition.is().text(secondSlideFullText);
-
-		carouselWithFadeTransition.prevControl().is().text(prevText);
-	}
-
-	@Test
-	public void fadeNextTest() {
-		carouselWithFadeTransition.next();
-		carouselWithFadeTransition.is().text(secondSlideFullText);
-
-		carouselWithFadeTransition.next();
-		carouselWithFadeTransition.is().text(thirdSlideFullText);
-
-		carouselWithFadeTransition.nextControl().is().text(nextText);
-	}
-
-	// Carousel with interval tests
-	@Test
-	public void intervalTest() {
-		int customInterval = 1;
 		WebPage.reload();
-		durationMoreThan(interval, () -> carouselWithCustomInterval.is().text(secondSlideFullText));
-		customInterval = carouselWithCustomInterval.interval() / 1000;
-		durationMoreThan(customInterval, () -> carouselWithCustomInterval.is().text(thirdSlideFullText));
-		customInterval = carouselWithCustomInterval.interval() / 1000;
-		durationMoreThan(customInterval, () -> carouselWithCustomInterval.is().text(firstSlideFullText));
-		customInterval = carouselWithCustomInterval.interval() / 1000;
-		durationMoreThan(customInterval, () -> carouselWithCustomInterval.is().text(secondSlideFullText));
+		carousel.show();
+	}
+
+	@Test
+	public void getSlideTest() {
+		Slide slide = carousel.activeSlide();
+		carousel.is().selected("FIRST SLIDE LABEL");
+		slide.has().text(firstSlideText);
+	}
+
+	@Test
+	public void nextSlideTest() {
+		carousel.next();
+		carousel.is().selected("SECOND SLIDE LABEL");
+		Slide slide = carousel.activeSlide();
+		slide.has().text(secondSlideText);
+	}
+
+	@Test
+	public void prevSlideTest() {
+		carousel.previous();
+		carousel.is().selected("THIRD SLIDE LABEL");
+		Slide slide = carousel.activeSlide();
+		slide.has().text(thirdSlideText);
+	}
+
+	@Test
+	public void selectSlideTest() {
+		carousel.openSlide(3);
+		Slide slide = carousel.activeSlide();
+		slide.has().text(thirdSlideText);
+	}
+
+	@Test
+	public void getSlideDataTest() {
+		SlideInfo info = carousel.activeSlideData();
+		assertEquals(info.toString(), firstSlideText);
+	}
+
+	@Test
+	public void getSlideDataByIndexTest() {
+		SlideInfo info = carousel.getData(2);
+		assertEquals(info.toString(), secondSlideText);
+	}
+
+	@Test
+	public void getSlideDataByTextTest() {
+		SlideInfo info = carousel.getData("THIRD SLIDE LABEL");
+		assertEquals(info.toString(), thirdSlideText);
+	}
+
+	@Test
+	public void getSlideByIndexTest() {
+		Slide info = carousel.get(2);
+		info.image.find("img").has().attr("src", containsString("cyclope.jpg"));
+	}
+
+	@Test
+	public void getSlideByTextTest() {
+		Slide info = carousel.get("THIRD SLIDE LABEL");
+		info.image.find("img").has().attr("src", containsString("punisher.jpg"));
+	}
+
+	@Test
+	public void isValidationTest() {
+		carousel.is().displayed().enabled();
+		carousel.has().text(firstSlideText);
+	}
+	@Test
+	public void baseValidationTest() {
+		baseValidation(carousel);
 	}
 }

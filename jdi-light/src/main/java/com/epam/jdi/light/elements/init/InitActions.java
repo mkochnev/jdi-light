@@ -1,6 +1,7 @@
 package com.epam.jdi.light.elements.init;
 
 import com.epam.jdi.light.elements.base.DriverBase;
+import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.*;
 import com.epam.jdi.light.elements.complex.dropdown.Dropdown;
@@ -156,6 +157,11 @@ public class InitActions {
     public static IBaseElement elementSetup(SiteInfo info) {
         IBaseElement jdi = (IBaseElement) info.instance;
         defaultSetup(info, jdi.base());
+        Object parent = jdi.base().parent;
+        if (parent != null && isClass(parent.getClass(), IBaseElement.class)) {
+            JDIBase parentBase = ((IBaseElement)parent).base();
+            jdi.base().searchRules = new MapArray<>(parentBase.searchRules);
+        }
         if (info.field != null) {
             for (Pair<String, AnnotationRule> aRule : JDI_ANNOTATIONS) {
                 try {

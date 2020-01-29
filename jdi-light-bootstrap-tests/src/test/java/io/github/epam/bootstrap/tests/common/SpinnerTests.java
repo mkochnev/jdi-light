@@ -17,22 +17,26 @@ public class SpinnerTests extends TestsInit {
         spinnerLoading.show();
         spinnerLoading.waitFor().hidden();
     }
+
     @Test
     public void checkSpinnerAppearAndThenDisappear() {
         startButton.click();
         spinnerLoading.is().displayed();
-        spinnerLoading.is().hidden();
+        spinnerLoading.waitFor().hidden();
     }
+
     @Test
     public void disappear() {
         startButton.click();
         spinnerLoading.waitFor().disappear();
     }
+
     @Test
     public void checkSpinnerHidden() {
         startButton.click();
         spinnerLoading.assertThat().hidden();
     }
+
     @Test
     public void baseValidationTest() {
         baseValidation(spinnerRotate);

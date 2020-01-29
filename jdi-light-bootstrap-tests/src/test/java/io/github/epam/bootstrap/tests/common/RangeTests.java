@@ -30,18 +30,21 @@ public class RangeTests extends TestsInit {
     public void getValueTest() {
         assertEquals(defaultRange.value(), 50);
     }
+
     @Test
     public void minTest() {
         assertEquals(defaultRange.min(), 0);
         assertEquals(minMaxRange.min(), 1);
         assertEquals(fractionalRange.min(), 2);
     }
+
     @Test
     public void maxTest() {
         assertEquals(defaultRange.max(), 100);
         assertEquals(minMaxRange.max(), 10);
         assertEquals(fractionalRange.max(), 7);
     }
+
     @Test
     public void stepTest() {
         assertEquals(defaultRange.step(), 1);

@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.containsString;
  */
 
 public class AlertTests extends TestsInit {
-
     final String text = "Alert with index page link.";
 
     @BeforeMethod
@@ -30,6 +29,7 @@ public class AlertTests extends TestsInit {
     public void simpleAlertExistingTest() {
         simpleAlert.is().displayed().enabled();
     }
+
     @Test
     public void simpleAlertTextTest() {
         simpleAlert.is().text(text);
@@ -42,6 +42,7 @@ public class AlertTests extends TestsInit {
         dismissibleAlert.closeAlertButton.click();
         dismissibleAlert.is().hidden();
     }
+
     @Test
     public void baseValidationTest() {
         baseValidation(simpleAlert);

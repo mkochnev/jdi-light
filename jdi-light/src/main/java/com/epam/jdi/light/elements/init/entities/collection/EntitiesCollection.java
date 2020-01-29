@@ -3,6 +3,7 @@ package com.epam.jdi.light.elements.init.entities.collection;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
+import com.epam.jdi.light.elements.interfaces.base.IClickable;
 import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
 import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.map.MapArray;
@@ -82,6 +83,11 @@ public class EntitiesCollection {
         if (isClass(element.getClass(), type))
             return (T) element;
         throw exception("Can't cast element '%s' to '%s'", name, type.getSimpleName());
+    }
+    public static <T> T getByType(ICoreElement element, Class<T> type) {
+        return (T) (isClass(element.getClass(), type)
+                ? element
+                : element.core());
     }
     public static ICoreElement getUI(String name) {
         Object element = getElement(name);

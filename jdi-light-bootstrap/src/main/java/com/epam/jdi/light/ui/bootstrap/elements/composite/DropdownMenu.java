@@ -42,35 +42,9 @@ public class DropdownMenu extends BootstrapDropdown {
         return this.items;
     }
 
-    @Override
-    public DropdownMenuAssert is() {
-        return new DropdownMenuAssert<>().set(this);
-    }
-
-    @Override
-    public DropdownMenuAssert assertThat() {
-        return is();
-    }
-
-    @Override
-    public DropdownMenuAssert has() {
-        return is();
-    }
-
-    @Override
-    public DropdownMenuAssert waitFor() {
-        return is();
-    }
-
-    @Override
-    public DropdownMenuAssert shouldBe() {
-        return is();
-    }
-
-    @Override
-    public DropdownMenuAssert verify() {
-        assertSoft();
-        return is();
-    }
+    //@Override
+    //public DropdownMenuAssert is() {
+    //    return new DropdownMenuAssert<>().set(this);
+    //}
 
 }

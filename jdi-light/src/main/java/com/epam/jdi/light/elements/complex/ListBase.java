@@ -7,7 +7,9 @@ import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.common.Label;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.init.SiteInfo;
-import com.epam.jdi.light.elements.interfaces.base.IListBase;
+import com.epam.jdi.light.elements.interfaces.base.IClickable;
+import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
+import com.epam.jdi.light.elements.interfaces.common.IsText;
 import com.epam.jdi.light.elements.pageobjects.annotations.Title;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.LinqUtils;
@@ -22,17 +24,18 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.elements.init.PageFactory.initJdiField;
-import static com.epam.jdi.light.elements.init.PageFactory.setupFieldUsingRules;
+import static com.epam.jdi.light.elements.init.PageFactory.*;
+import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.getByType;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.ReflectionUtils.getValueField;
+import static com.epam.jdi.tools.ReflectionUtils.isClass;
 
 /**
  * Created by Roman Iovlev on 14.02.2018
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
-abstract class ListBase<T extends IListBase, A extends UISelectAssert>
+abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     extends UIBaseElement<A> implements IList<T>, ISetup, ISelector {
     protected WebList list;
     public WebList list() {
@@ -46,7 +49,7 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
     ListBase() {}
     ListBase(By locator) { list = new WebList(locator); }
     ListBase(List<WebElement> elements) { list = new WebList(elements); }
-    Class<?> initClass = UIElement.class;
+    protected Class<?> initClass = UIElement.class;
 
     private boolean actualMapValue() {
         return map.hasValue() && map.get().size() > 0 && isActual(map.get().get(0).value);
@@ -87,7 +90,8 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
      */
     @JDIAction("Select '{0}' for '{name}'")
     public void select(String value) {
-        get(value).click();
+        T item = get(value);
+        getByType(item, IClickable.class).click();
     }
 
     /**
@@ -157,8 +161,11 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
     @JDIAction("Get '{name}' selected value")
     public String selected() {
         refresh();
-        T first = logger.logOff(() -> first(IListBase::isSelected) );
-        return first != null ? first.getText() : "";
+        T first = logger.logOff(() ->
+            first(item -> getByType(item, CanBeSelected.class).isSelected()));
+        if (first == null)
+            return "";
+        return getByType(first, IsText.class).getText();
     }
 
     /**
@@ -253,7 +260,7 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
             this.initClass = initClass;
         } catch (Exception ex) { throw  exception(ex, "Can't init WebList. Weblist elements should extend UIElement"); }
     }
-    private T toT(UIElement el) {
+    protected T toT(UIElement el) {
         try {
             if (initClass == null)
                 throw exception("Can't init List of UI Elements. Class Type is null");
@@ -267,6 +274,8 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
                 setupFieldUsingRules(info);
             T t = (T) info.instance;
             t.base().setCore(el);
+            t.base().searchRules = list().searchRules;
+            initElements(t);
             return t;
         } catch (Exception ex) { throw exception(ex, "Can't init new element for list"); }
     }
@@ -294,7 +303,11 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
         try {
             field = element.getClass().getField(titleField);
         } catch (Exception ignore) { /* if field name identified it is always exist */ }
-        return ((WebElement) getValueField(field, element)).getText();
+        Object title = getValueField(field, element);
+        IsText textElement = getByType((ICoreElement) title, IsText.class);
+        textElement.base().noValidation();
+        String titleText = textElement.getText();
+        return titleText;
     }
     public boolean isEmpty() { return size() == 0; }
     public boolean isNotEmpty() { return size() > 0; }

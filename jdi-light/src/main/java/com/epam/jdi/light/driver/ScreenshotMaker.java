@@ -1,5 +1,6 @@
 package com.epam.jdi.light.driver;
 
+import com.epam.jdi.light.logger.AttachmentStrategy;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import static com.epam.jdi.light.driver.WebDriverFactory.getDriver;
 import static com.epam.jdi.light.driver.WebDriverFactory.hasRunDrivers;
 import static com.epam.jdi.light.driver.get.DriverData.LOGS_PATH;
 import static com.epam.jdi.light.driver.get.DriverData.PROJECT_PATH;
+import static com.epam.jdi.light.logger.AttachmentStrategy.*;
 import static com.epam.jdi.light.settings.WebSettings.TEST_NAME;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.PathUtils.mergePath;
@@ -26,6 +28,12 @@ public class ScreenshotMaker {
     public static String SCREEN_PATH = LOGS_PATH + "\\screens";
     public static String SCREEN_NAME = "screen";
     public static String SCREEN_FILE_SUFFIX = ".jpg";
+    public static AttachmentStrategy SCREENSHOT_STRATEGY = ON_FAIL;
+    public static String takeScreenOnFailure() {
+        return SCREENSHOT_STRATEGY == ON_FAIL
+                ? takeScreen()
+                : null;
+    }
 
     public static String takeScreen() {
         return new ScreenshotMaker().takeScreenshot();
@@ -35,8 +43,8 @@ public class ScreenshotMaker {
         if (isBlank((SCREEN_PATH))) return "";
         String result = SCREEN_PATH.replace("/", "\\");
         return result.contains(":")
-            ? SCREEN_PATH
-            : PROJECT_PATH + SCREEN_PATH;
+                ? SCREEN_PATH
+                : PROJECT_PATH + SCREEN_PATH;
     }
     public String takeScreenshot() {
         String name = TEST_NAME.get();
@@ -49,7 +57,7 @@ public class ScreenshotMaker {
         if (!hasRunDrivers())
             throw exception("Failed to do screenshot. No Drivers run");
         String screensFilePath = getFileName(mergePath(
-            getPath(), name + nowTime(dateFormat)));
+                getPath(), name + nowTime(dateFormat)));
         new File(screensFilePath).getParentFile().mkdirs();
         File screensFile = ((TakesScreenshot) getDriver()).getScreenshotAs(FILE);
         try {

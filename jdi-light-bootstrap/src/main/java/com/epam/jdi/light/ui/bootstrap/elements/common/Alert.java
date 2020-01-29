@@ -4,7 +4,6 @@ import com.epam.jdi.light.asserts.generic.HasAssert;
 import com.epam.jdi.light.asserts.generic.TextAssert;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.interfaces.base.HasValue;
-import com.epam.jdi.light.elements.interfaces.base.IListBase;
 import com.epam.jdi.light.elements.interfaces.common.IsText;
 import com.epam.jdi.light.elements.interfaces.composite.PageObject;
 
@@ -15,7 +14,7 @@ import static com.epam.jdi.light.elements.init.PageFactory.initElements;
  */
 
 //APPROVED
-public class Alert extends UIBaseElement<TextAssert> implements PageObject, IListBase, IsText, HasValue, HasAssert<TextAssert> {
+public class Alert extends UIBaseElement<TextAssert> implements PageObject, IsText, HasValue, HasAssert<TextAssert> {
     public Alert() { initElements(this); }
     public String getValue() { return getText(); }
     @Override

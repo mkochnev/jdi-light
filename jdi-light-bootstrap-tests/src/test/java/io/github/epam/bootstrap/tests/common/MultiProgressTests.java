@@ -12,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class MultiProgressTests extends TestsInit {
+
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();
@@ -23,18 +24,22 @@ public class MultiProgressTests extends TestsInit {
     public void getValueTest() {
         assertThat(multiProgressbar.value(), is("15$;45$;30$"));
     }
+
     @Test
     public void valuesTest() {
         assertThat(multiProgressbar.values(), hasItems("15$", "45$", "30$"));
     }
+
     @Test
     public void minTest() {
         assertThat(multiProgressbar.min(), is(0));
     }
+
     @Test
     public void maxTest() {
         assertThat(multiProgressbar.max(), is(150));
     }
+
     @Test
     public void isValidationTest() {
         multiProgressbar.is().displayed().enabled().value("15$;45$;30$");
@@ -43,6 +48,7 @@ public class MultiProgressTests extends TestsInit {
             .and().max(greaterThan(140))
             .and().value(containsString("45$;30$"));
     }
+
     @Test
     public void isValuesValidationTest() {
         multiProgressbar.has().values("15$", "45$", "30$");

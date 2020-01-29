@@ -59,6 +59,15 @@ public class UIAssert<A extends UIAssert, E extends ICoreElement> extends BaseAs
     }
 
     /**
+     * Check that the element is in Viewport
+     */
+    @JDIAction(value = "Assert that '{name}' is visible by user", timeout = 0)
+    public A visible() {
+        jdiAssert(element.isVisible() ? "visible" : "out of screen or hidden", Matchers.is("visible"));
+        return (A) this;
+    }
+
+    /**
      * Check that the element is enabled
      */
     @JDIAction("Assert that '{name}' is enabled")

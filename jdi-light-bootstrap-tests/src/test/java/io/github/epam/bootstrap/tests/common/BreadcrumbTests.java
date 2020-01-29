@@ -21,8 +21,8 @@ import static org.hamcrest.Matchers.*;
  */
 
 public class BreadcrumbTests extends TestsInit {
-    static final String[] BREADCRUMB = new String[] {"Home", "HTML 5", "Bootstrap"};
-    static final String HOME_NODE = "<a href=\"https://jdi-testing.github.io/jdi-light/index.html\" target=\"_blank\">Home</a>";
+    final String[] BREADCRUMB = new String[] {"Home", "HTML 5", "Bootstrap"};
+    final String HOME_NODE = "<a href=\"https://jdi-testing.github.io/jdi-light/index.html\" target=\"_blank\">Home</a>";
 
     @BeforeMethod
     public void before() {
@@ -30,38 +30,45 @@ public class BreadcrumbTests extends TestsInit {
         bsPage.shouldBeOpened();
         breadcrumb.show();
     }
+
     @Test
     public void getValuesTest() {
         List<String> values = breadcrumb.values();
         assertThat(values, hasItems(BREADCRUMB));
     }
+
     @Test
     public void selectTest() {
         breadcrumb.select("Home");
         homePage.checkOpenedInNewWindow();
         closeWindow();
     }
+
     @Test
     public void selectIndexTest() {
         breadcrumb.select(0);
         homePage.checkOpenedInNewWindow();
         closeWindow();
     }
+
     @Test
     public void getTest() {
         String homeNode = breadcrumb.get("Home").find("a").printHtml();
         assertThat(homeNode, is(HOME_NODE));
     }
+
     @Test
     public void getIndexTest() {
         String homeNode = breadcrumb.get(0).find("a").printHtml();
         assertThat(homeNode, is(HOME_NODE));
     }
+
     @Test
     public void selectedTest() {
         String selected = breadcrumb.selected();
         assertThat(selected, is("Bootstrap"));
     }
+
     @Test
     public void assertValuesTest() {
         breadcrumb.has().size(BREADCRUMB.length);

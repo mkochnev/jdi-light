@@ -31,10 +31,12 @@ public class SwitchesTests extends TestsInit {
         switcher.uncheck();
         switcher.is().deselected();
     }
+
     @Test
     public void labelTest() {
         switcher.label().has().text("Toggle this switch element");
     }
+
     @Test
     public void labelClickTests() {
         switcher.label().click();
@@ -51,6 +53,7 @@ public class SwitchesTests extends TestsInit {
         disabledSwitcher.label().click();
         disabledSwitcher.is().deselected();
     }
+
     @Test
     public void baseValidationTest() {
         baseValidation(switcher);

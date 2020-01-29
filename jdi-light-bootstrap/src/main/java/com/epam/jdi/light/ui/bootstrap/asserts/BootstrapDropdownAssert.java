@@ -7,7 +7,7 @@ import org.hamcrest.Matchers;
 
 import static com.epam.jdi.light.asserts.core.SoftAssert.jdiAssert;
 
-public class BootstrapDropdownAssert<A extends BootstrapDropdownAssert, E extends BootstrapDropdown> extends UIAssert<A, E> {
+public class BootstrapDropdownAssert<A extends BootstrapDropdownAssert<?,?>, E extends BootstrapDropdown> extends UIAssert<A, E> {
     @JDIAction("Assert that dropdown '{name}' expanded")
     public A expanded() {
         jdiAssert(element.isExpanded(), Matchers.is(true));

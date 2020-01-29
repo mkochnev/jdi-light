@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 import static org.testng.Assert.assertEquals;
 
 public class BadgeTests extends TestsInit {
-    private String text = "Unread Messages 9";
+    final String text = "Unread Messages 9";
 
     @BeforeMethod
     public void before() {

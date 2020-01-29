@@ -57,7 +57,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         return this;
     }
     public JDIBase() {
-        searchRules.add(SEARCH_RULES);
+        searchRules.add(SEARCH_RULE);
     }
     public JDIBase(JDIBase base) {
         setCore(base);
@@ -87,8 +87,8 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     }
     public CacheValue<WebElement> webElement = new CacheValue<>();
     public CacheValue<List<WebElement>> webElements = new CacheValue<>();
-    public List<JFunc1<WebElement, Boolean>> searchRules = new ArrayList<>();
-    private List<JFunc1<WebElement, Boolean>> searchRules() {
+    public MapArray<String, JFunc1<WebElement, Boolean>> searchRules = new MapArray<>();
+    private MapArray<String, JFunc1<WebElement, Boolean>> searchRules() {
         return searchRules;
     }
     public JAction1<UIElement> beforeSearch = null;
@@ -100,30 +100,30 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public JDIBase doBefore(JAction1<UIElement> action) { beforeSearch = action; return this; }
     public JDIBase showBefore() { beforeSearch = UIElement::show; return this; }
     public JDIBase noValidation() {
-        return setSearchRule(ANY_ELEMENT);
+        return setSearchRule("Any", ANY_ELEMENT);
     }
     public <T> T noValidation(JFunc<T> func) {
-        List<JFunc1<WebElement, Boolean>> rules = new ArrayList<>(searchRules);
+        MapArray<String, JFunc1<WebElement, Boolean>> rules = new MapArray<>(searchRules);
         searchRules.clear();
         T result = func.execute();
         searchRules = rules;
         return result;
     }
     public JDIBase searchVisible() {
-        return setSearchRule(VISIBLE_ELEMENT);
+        return setSearchRule("Visible", VISIBLE_ELEMENT);
     }
-    public JDIBase visibleEnabled() { return setSearchRule(ENABLED_ELEMENT); }
+    public JDIBase visibleEnabled() { return setSearchRule("Enabled", ENABLED_ELEMENT); }
     public JDIBase inView() {
         showBefore();
-        return setSearchRule(ELEMENT_IN_VIEW);
+        return setSearchRule("Element in view", ELEMENT_IN_VIEW);
     }
-    public JDIBase addSearchRule(JFunc1<WebElement, Boolean> rule) {
-        searchRules.add(rule);
+    public JDIBase addSearchRule(String name, JFunc1<WebElement, Boolean> rule) {
+        searchRules.add(name, rule);
         return this;
     }
-    public JDIBase setSearchRule(JFunc1<WebElement, Boolean> rule) {
+    public JDIBase setSearchRule(String name, JFunc1<WebElement, Boolean> rule) {
         searchRules.clear();
-        searchRules.add(rule);
+        searchRules.add(name, rule);
         return this;
     }
     public JDIBase setWebElement(WebElement el) {
@@ -191,7 +191,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     }
     public WebElement get() {
         WebElement element = get(new Object[]{});
-        for (JFunc1<WebElement, Boolean> rule : searchRules())
+        for (JFunc1<WebElement, Boolean> rule : searchRules().values())
             if (!rule.execute(element))
                 throw exception("Search rules failed for element. Please check searchRules() for element or in global settings(WebSettings.SEARCH_RULES)");
         return element;
@@ -248,7 +248,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
 
     private List<WebElement> filterElements(List<WebElement> elements) {
         List<WebElement> result = elements;
-        for (JFunc1<WebElement, Boolean> rule : searchRules())
+        for (JFunc1<WebElement, Boolean> rule : searchRules().values())
             result = filter(result, rule::execute);
         if (result.size() == 0)
             throw exception(ELEMENTS_FILTERED_MESSAGE, elements.size(), toString(), getTimeout());

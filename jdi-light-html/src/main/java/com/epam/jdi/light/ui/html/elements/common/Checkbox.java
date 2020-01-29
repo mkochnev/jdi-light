@@ -4,6 +4,7 @@ import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.common.Label;
 import com.epam.jdi.light.elements.common.UIElement;
+import com.epam.jdi.light.elements.complex.CanBeSelected;
 import com.epam.jdi.light.elements.interfaces.base.HasCheck;
 import com.epam.jdi.light.elements.interfaces.base.HasClick;
 import com.epam.jdi.light.elements.interfaces.base.HasLabel;
@@ -11,15 +12,13 @@ import com.epam.jdi.light.elements.interfaces.base.SetValue;
 import com.epam.jdi.light.ui.html.asserts.CheckboxAssert;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.elements.init.UIFactory.$;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Created by Roman Iovlev on 26.09.2019
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
 public class Checkbox extends UIBaseElement<CheckboxAssert>
-    implements HasLabel, SetValue, HasClick, HasCheck {
+    implements HasLabel, SetValue, HasClick, HasCheck, CanBeSelected {
 
     @Override
     public Label label() {
@@ -60,10 +59,6 @@ public class Checkbox extends UIBaseElement<CheckboxAssert>
     public void uncheck() {
         if (isSelected())
             click();
-    }
-    @JDIAction("Check that '{name}' is selected")
-    public boolean isSelected() {
-        return core().isSelected();
     }
     // endregion
 

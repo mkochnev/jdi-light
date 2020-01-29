@@ -7,8 +7,6 @@ import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
 import com.epam.jdi.light.ui.bootstrap.asserts.BootstrapDropdownAssert;
 import com.epam.jdi.light.ui.html.elements.common.Button;
 
-import static com.epam.jdi.light.asserts.core.SoftAssert.assertSoft;
-
 /**
  * To see an example of Dropdown web element in bootstrap please visit https://getbootstrap.com/docs/4.3/components/dropdowns/#examples
  */
@@ -25,7 +23,7 @@ public class BootstrapDropdown extends Section {
         if (!isExpanded()) {
             dropdownToggle.click();
         }
-        waitFor().expanded();
+        //waitFor().expanded();
     }
 
     @JDIAction("Collapse dropdown '{name}' ")
@@ -33,7 +31,7 @@ public class BootstrapDropdown extends Section {
         if (isExpanded()) {
             dropdownToggle.click();
         }
-        waitFor().collapsed();
+        //waitFor().collapsed();
     }
 
     @JDIAction("Check that '{name}' is expanded")
@@ -46,36 +44,10 @@ public class BootstrapDropdown extends Section {
         return !isExpanded();
     }
 
-    @Override
-    public BootstrapDropdownAssert is() {
-        return new BootstrapDropdownAssert<>().set(this);
-    }
-
-    @Override
-    public BootstrapDropdownAssert assertThat() {
-        return is();
-    }
-
-    @Override
-    public BootstrapDropdownAssert has() {
-        return is();
-    }
-
-    @Override
-    public BootstrapDropdownAssert waitFor() {
-        return is();
-    }
-
-    @Override
-    public BootstrapDropdownAssert shouldBe() {
-        return is();
-    }
-
-    @Override
-    public BootstrapDropdownAssert verify() {
-        assertSoft();
-        return is();
-    }
+    //@Override
+    //public BootstrapDropdownAssert<?,?> is() {
+    //    return new BootstrapDropdownAssert<?,?>().set(this);
+    //}
 
     public Button expander() {
         return dropdownToggle;

@@ -13,6 +13,7 @@ import com.epam.jdi.tools.StringUtils;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc;
 import com.epam.jdi.tools.func.JFunc1;
+import com.epam.jdi.tools.pairs.Pair;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -79,23 +80,23 @@ public class WebSettings {
         el != null && el.isDisplayed() && el.isEnabled();
     public static JFunc1<WebElement, Boolean> ELEMENT_IN_VIEW = el ->
         el != null && !el.isDisplayed() && $(el).isClickable();
-    public static JFunc1<WebElement, Boolean> SEARCH_RULES = VISIBLE_ELEMENT;
+    public static Pair<String, JFunc1<WebElement, Boolean>> SEARCH_RULE = Pair.$("Visible", VISIBLE_ELEMENT);
     public static JAction1<UIElement> BEFORE_SEARCH = b -> {};
-    public static void setSearchRule(JFunc1<WebElement, Boolean> rule) {
-        SEARCH_RULES = rule;
+    public static void setSearchRule(String name, JFunc1<WebElement, Boolean> rule) {
+        SEARCH_RULE = Pair.$(name, rule);
     }
     public static void noValidation() {
-        SEARCH_RULES = ANY_ELEMENT;
+        SEARCH_RULE = Pair.$("Any", ANY_ELEMENT);
         CLICK_TYPE = CENTER;
     }
     public static void onlyVisible() {
-        SEARCH_RULES = VISIBLE_ELEMENT;
+        SEARCH_RULE = Pair.$("Visible", VISIBLE_ELEMENT);
     }
     public static void visibleEnabled() {
-        SEARCH_RULES = ENABLED_ELEMENT;
+        SEARCH_RULE = Pair.$("Enabled", ENABLED_ELEMENT);
     }
     public static void inView() {
-        SEARCH_RULES = ELEMENT_IN_VIEW;
+        SEARCH_RULE = Pair.$("Element in view", ELEMENT_IN_VIEW);
         BEFORE_SEARCH = UIElement::show;
     }
 
