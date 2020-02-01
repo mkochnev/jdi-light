@@ -30,6 +30,7 @@ import static com.epam.jdi.light.driver.ScreenshotMaker.getPath;
 import static com.epam.jdi.light.driver.WebDriverFactory.*;
 import static com.epam.jdi.light.elements.base.OutputTemplates.*;
 import static com.epam.jdi.light.elements.common.WindowsManager.checkNewWindowIsOpened;
+import static com.epam.jdi.light.elements.common.WindowsManager.getWindows;
 import static com.epam.jdi.light.elements.init.PageFactory.*;
 import static com.epam.jdi.light.elements.pageobjects.annotations.WebAnnotationsUtil.getUrlFromUri;
 import static com.epam.jdi.light.logger.LogLevels.*;
@@ -153,6 +154,7 @@ public class WebPage extends DriverBase implements PageObject {
         preInit();
         CacheValue.reset();
         driver().navigate().to(url);
+        getWindows();
         setCurrentPage(this);
     }
     public void open(Object... params) {
