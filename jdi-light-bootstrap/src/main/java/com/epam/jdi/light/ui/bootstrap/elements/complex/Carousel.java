@@ -35,20 +35,17 @@ public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAsser
 	protected String prevLocator = ".carousel-control-prev";
 	protected String indicatorsLocator = "li[data-slide-to]";
 
-	protected Class<?> initClass = UIElement.class;
-	public Class<D> dataType;
-
-	//@UI(".carousel-item") @GetAny public DataList<T, D> slide;
+	@UI(".carousel-item") @GetAny public DataList<T, D> slides = new DataList<>();
 	@UI(".carousel-item") @VisualCheck UIElement activeSlide;
 
 	public T activeSlide() {
 		return toT(activeSlide);
 	}
 	protected T toT(UIElement el) {
-		return initT(el, this, initClass);
+		return initT(el, this, slides.initClass);
 	}
 	public D activeSlideData() {
-		return asEntity(activeSlide(), dataType);
+		return asEntity(activeSlide(), slides.dataType);
 	}
 
 	@JDIAction("Open next slide '{name}'")
@@ -64,13 +61,14 @@ public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAsser
 	}
 	@JDIAction("Open slide '{0}'")
 	public void openSlide(String name) {
-		indicators().select(name);
+		int index = slides.elements(1).getIndex(name);
+		if (index < 0)
+			throw exception("Can't find slide with name '%s'", name);
+		openSlide(index + 1);
 	}
 	@JDIAction("Open slide '{0}'")
 	public void openSlide(int index) {
-		if (index < 1)
-			throw exception("Can't select element with index '%s'. Index should be 1 or more", index);
-		indicators().select(index-1);
+		indicators().select(index);
 	}
 	@Override @JDIAction(level = DEBUG)
 	public void show() {
@@ -79,10 +77,12 @@ public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAsser
 
 	@JDIAction("Get '{name}' text")
 	public String getText() {
-		T slide = activeSlide();
-		if (isClass(initClass, IsText.class))
+		return getText(activeSlide());
+	}
+	private String getText(T slide) {
+		if (isClass(slides.initClass, IsText.class))
 			return ((IsText)slide).getText();
-		if (isClass(initClass, HasValue.class))
+		if (isClass(slides.initClass, HasValue.class))
 			return ((HasValue)slide).getValue();
 		return slide.core().getText();
 	}
@@ -100,13 +100,9 @@ public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAsser
 			if (types.length > 2)
 				throw exception("Can't setup Carousel generic parameters for field '%s'. Actual more than %s but expected 1 or 2",
 						field.getName(), types.length);
-			initClass = types[0].toString().equals("?") ? null : (Class<T>)types[0];
-			dataType = types.length == 1 || types[1].toString().equals("?") ? null : (Class<D>)types[1];
-		} catch (Exception ex) {
-			throw exception(ex, "Can't instantiate List<%s, %s> field '%s'", initClass == null
-							? "?" : initClass.getSimpleName(), dataType == null ? "?" : dataType.getSimpleName(),
-					field.getName());
-		}
+			slides.initClass = types[0].toString().equals("?") ? null : (Class<T>)types[0];
+			slides.dataType = types.length == 1 || types[1].toString().equals("?") ? null : (Class<D>)types[1];
+		} catch (Exception ignore) { }
 	}
 	@Override
 	public TextAssert is() { return new TextAssert().set(this); }

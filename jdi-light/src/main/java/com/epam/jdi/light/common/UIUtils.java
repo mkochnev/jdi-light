@@ -49,7 +49,7 @@ public final class UIUtils {
         List<Field> ordered = new ArrayList<>();
         if (withOrder.size() > 0) {
             MultiMap<Integer, Field> orderMap = new MultiMap<>(withOrder,
-                k -> k.getAnnotation(Order.class).value(), v -> v);
+                k -> k.getAnnotation(Order.class).value(), v -> v).ignoreKeyCase();
             orderMap.pairs.sort((d1, d2) -> d2.key - d1.key);
             for (Pair<Integer, Field> pairs : orderMap.pairs)
                 ordered.add(pairs.value);

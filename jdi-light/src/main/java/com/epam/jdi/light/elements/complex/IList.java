@@ -1,7 +1,5 @@
 package com.epam.jdi.light.elements.complex;
 
-import com.epam.jdi.light.elements.common.UIElement;
-import com.epam.jdi.light.elements.init.SiteInfo;
 import com.epam.jdi.light.elements.interfaces.base.HasValue;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
 import com.epam.jdi.tools.LinqUtils;
@@ -17,7 +15,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.elements.init.PageFactory.*;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
 
 /**

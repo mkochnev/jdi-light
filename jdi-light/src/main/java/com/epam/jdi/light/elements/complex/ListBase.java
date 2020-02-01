@@ -47,12 +47,12 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     ListBase() {}
     ListBase(By locator) { list = new WebList(locator); }
     ListBase(List<WebElement> elements) { list = new WebList(elements); }
-    protected Class<?> initClass = UIElement.class;
+    public Class<?> initClass = UIElement.class;
 
     private boolean actualMapValue() {
         return map.hasValue() && map.get().size() > 0 && isActual(map.get().get(0).value);
     }
-    protected CacheValue<MultiMap<String, T>> map = new CacheValue<>(MultiMap::new);
+    protected CacheValue<MultiMap<String, T>> map = new CacheValue<>(() -> new MultiMap<String, T>().ignoreKeyCase());
     private boolean isActual(T element) {
         try {
             element.getTagName();

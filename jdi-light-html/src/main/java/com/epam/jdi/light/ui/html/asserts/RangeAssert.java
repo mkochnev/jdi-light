@@ -8,8 +8,6 @@ import org.hamcrest.Matchers;
 
 import static com.epam.jdi.light.asserts.core.SoftAssert.jdiAssert;
 import static com.epam.jdi.light.ui.html.HtmlUtils.getDouble;
-import static java.lang.Integer.parseInt;
-import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Roman Iovlev on 14.02.2018

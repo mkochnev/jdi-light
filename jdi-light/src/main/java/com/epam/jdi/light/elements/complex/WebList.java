@@ -89,7 +89,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
 
     protected CacheValue<MultiMap<String, UIElement>> elements =
-        new CacheValue<>(MultiMap::new);
+        new CacheValue<>(() -> new MultiMap<String, UIElement>().ignoreKeyCase());
 
     protected String nameFromIndex(int i) {
         return nameFromValue(i+1+"");
@@ -111,7 +111,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return result;
     }
     protected MultiMap<String, UIElement> getListElements(int minAmount) {
-        MultiMap<String, UIElement> result = new MultiMap<>();
+        MultiMap<String, UIElement> result = new MultiMap<String, UIElement>().ignoreKeyCase();
         List<WebElement> we = getList(minAmount);
         int length = we.size();
         for (int i=0; i < length; i++) {
@@ -192,15 +192,21 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     /**
      * @param index
      */
+    protected int startIndex = 1;
+    public WebList indexFromZero() {
+        startIndex = 0;
+        return this;
+    }
     @JDIAction(level = DEBUG) @Override
     public UIElement get(int index) {
-        if (index < 0)
-            throw exception("Can't get element with index '%s'. Index should be 0 or more", index);
-        if (locator.isEmpty() && elements.isUseCache() && elements.get().size() > index)
-            return elements.get().get(index).value;
+        if (index < startIndex)
+            throw exception("Can't get element with index '%s'. Index should be %s or more", index, startIndex);
+        int getIndex = index - startIndex;
+        if (locator.isEmpty() && elements.isUseCache() && elements.get().size() > getIndex)
+            return elements.get().get(getIndex).value;
         return (locator.isTemplate()
             ? tryGetByIndex(index)
-            : initElement(() -> getList(index+1).get(index)))
+            : initElement(() -> getList(getIndex+1).get(getIndex)))
         .setName(nameFromIndex(index));
     }
     protected UIElement tryGetByIndex(int index) {

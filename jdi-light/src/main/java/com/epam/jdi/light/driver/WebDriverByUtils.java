@@ -25,8 +25,8 @@ import static com.epam.jdi.tools.PrintUtils.print;
 import static com.epam.jdi.tools.ReflectionUtils.isClass;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static org.apache.logging.log4j.util.Strings.isBlank;
 import static java.util.Collections.singletonList;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 import static org.apache.logging.log4j.util.Strings.isNotEmpty;
 
 /**

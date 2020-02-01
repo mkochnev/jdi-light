@@ -5,10 +5,6 @@ import com.epam.jdi.light.ui.bootstrap.elements.composite.DropdownMenu;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
-import java.util.Arrays;
-
-import static com.epam.jdi.light.asserts.core.SoftAssert.jdiAssert;
-
 public class DropdownMenuAssert<A extends DropdownMenuAssert, E extends DropdownMenu> {//extends BootstrapDropdownAssert<A, E> {
     @JDIAction("Assert that '{name}' items values {0}")
     public A itemValues(Matcher<Iterable<String>> condition) {

@@ -3,12 +3,9 @@ package com.epam.jdi.light.ui.bootstrap.elements.composite;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
-import com.epam.jdi.light.ui.bootstrap.asserts.DropdownMenuAssert;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static com.epam.jdi.light.asserts.core.SoftAssert.assertSoft;
 
 /**
  * To see an example of Dropdown Menu web element please visit https://getbootstrap.com/docs/4.3/components/dropdowns/#menu-items
