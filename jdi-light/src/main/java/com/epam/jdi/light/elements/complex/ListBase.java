@@ -6,7 +6,6 @@ import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.common.Label;
 import com.epam.jdi.light.elements.common.UIElement;
-import com.epam.jdi.light.elements.init.SiteInfo;
 import com.epam.jdi.light.elements.interfaces.base.IClickable;
 import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
 import com.epam.jdi.light.elements.interfaces.common.IsText;
@@ -24,12 +23,11 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.elements.init.PageFactory.*;
+import static com.epam.jdi.light.common.UIUtils.initT;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.getByType;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.ReflectionUtils.getValueField;
-import static com.epam.jdi.tools.ReflectionUtils.isClass;
 
 /**
  * Created by Roman Iovlev on 14.02.2018
@@ -261,23 +259,7 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
         } catch (Exception ex) { throw  exception(ex, "Can't init WebList. Weblist elements should extend UIElement"); }
     }
     protected T toT(UIElement el) {
-        try {
-            if (initClass == null)
-                throw exception("Can't init List of UI Elements. Class Type is null");
-            SiteInfo info = new SiteInfo(base().driverName).set(s -> {
-                s.cl = initClass;
-                s.name = el.getName();
-                s.parent = el.parent;
-            });
-            initJdiField(info);
-            if (info.instance != null)
-                setupFieldUsingRules(info);
-            T t = (T) info.instance;
-            t.base().setCore(el);
-            t.base().searchRules = list().searchRules;
-            initElements(t);
-            return t;
-        } catch (Exception ex) { throw exception(ex, "Can't init new element for list"); }
+        return initT(el, this, initClass);
     }
 
     public static JFunc1<Field[], String> GET_TITLE_FIELD_NAME = fields -> {

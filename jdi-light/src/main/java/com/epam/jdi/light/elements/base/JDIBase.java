@@ -22,14 +22,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
 import static com.epam.jdi.light.elements.base.OutputTemplates.*;
-import static com.epam.jdi.light.elements.init.InitActions.isPageObject;
 import static com.epam.jdi.light.elements.init.UIFactory.$$;
 import static com.epam.jdi.light.logger.LogLevels.*;
 import static com.epam.jdi.light.settings.TimeoutSettings.TIMEOUT;
@@ -234,6 +232,9 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
             throw exception("Can't get element with template locator '%s'. Expected %s arguments but found %s", getLocator(), locator.argsCount(), args.length);
         }
         List<WebElement> els = getAllElements(args);
+        return getElement(els);
+    }
+    private WebElement getElement(List<WebElement> els) {
         if (els.size() == 1)
             return els.get(0);
         if (els.size() == 0)
@@ -281,7 +282,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
             } catch (Exception ignore) { webElements.clear(); }
         }
         if (locator.isEmpty())
-            return singletonList(beforeSearch(SMART_SEARCH.execute(this)));
+            return singletonList(beforeSearch(getSmart()));
         SearchContext searchContext = getContext(parent, locator);
         List<WebElement> result = uiSearch(searchContext, correctLocator(getLocator(args)));
         if (result.size() > 0)
@@ -373,14 +374,22 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         List<By> frames = bElement.getFrames();
         if (frames != null)
             return getFrameContext(frames);
-        Object parent = bElement.parent;
         By locator = bElement.getLocator();
-        SearchContext searchContext = getContext(parent, bElement.locator);
         return locator != null
-            ? uiSearch(searchContext, correctLocator(locator)).get(0)
-            : isPageObject(element.getClass())
-                ? searchContext
-                : SMART_SEARCH.execute(bElement.waitSec(getTimeout()));
+            ? getContextByLocator(bElement, locator)
+            : getSmartSearchContext(bElement);
+    }
+    private SearchContext getContextByLocator(JDIBase bElement, By locator) {
+        List<WebElement> els = uiSearch(getContext(bElement.parent, bElement.locator), correctLocator(locator));
+        return getElement(els);
+    }
+    private SearchContext getSmartSearchContext(JDIBase bElement) {
+        try {
+            WebElement result = SMART_SEARCH.execute(bElement.waitSec(getTimeout()));
+            if (result != null)
+                return result;
+        } catch (Exception ignore) { }
+        return getContext(bElement.parent, bElement.locator);
     }
     private boolean isRoot(Object parent) {
         return parent == null || isClass(parent.getClass(), WebPage.class)

@@ -1,17 +1,26 @@
 package com.epam.jdi.light.ui.bootstrap.elements.complex;
 
+import com.epam.jdi.light.asserts.generic.TextAssert;
 import com.epam.jdi.light.common.JDIAction;
+import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.DataList;
+import com.epam.jdi.light.elements.complex.ISetup;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.interfaces.base.HasValue;
 import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
 import com.epam.jdi.light.elements.interfaces.common.IsText;
+import com.epam.jdi.light.elements.pageobjects.annotations.GetAny;
 import com.epam.jdi.light.elements.pageobjects.annotations.VisualCheck;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.UIUtils.asEntity;
+import static com.epam.jdi.light.common.UIUtils.initT;
+import static com.epam.jdi.light.elements.init.InitActions.getGenericTypes;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.tools.ReflectionUtils.isClass;
 
@@ -20,32 +29,27 @@ import static com.epam.jdi.tools.ReflectionUtils.isClass;
  */
 
 //UPDATED
-public class Carousel<T extends ICoreElement, D> extends DataList<T, D> {
-	@Override
-	public WebList list() {
-		if (list == null) {
-			list = new WebList() .setUIElementName(this::elementTitle)
-				.setName(getName());
-			list.noValidation();
-			list.setLocator(".carousel-item").setParent(this);
-		}
-		return list;
-	}
+public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAssert>
+		implements HasValue, IsText, ISetup {
+	protected String nextLocator = ".carousel-control-next";
+	protected String prevLocator = ".carousel-control-prev";
+	protected String indicatorsLocator = "li[data-slide-to]";
+
+	protected Class<?> initClass = UIElement.class;
+	public Class<D> dataType;
+
+	//@UI(".carousel-item") @GetAny public DataList<T, D> slide;
 	@UI(".carousel-item") @VisualCheck UIElement activeSlide;
 
-	@Override
-	public String selected() {
-		return elementTitle(activeSlide);
-	}
 	public T activeSlide() {
 		return toT(activeSlide);
+	}
+	protected T toT(UIElement el) {
+		return initT(el, this, initClass);
 	}
 	public D activeSlideData() {
 		return asEntity(activeSlide(), dataType);
 	}
-	protected String nextLocator = ".carousel-control-next";
-	protected String prevLocator = ".carousel-control-prev";
-	protected String indicatorsLocator = "li[data-slide-to]";
 
 	@JDIAction("Open next slide '{name}'")
 	public void next() {
@@ -58,6 +62,11 @@ public class Carousel<T extends ICoreElement, D> extends DataList<T, D> {
 	private WebList indicators() {
 		return linkedList(indicatorsLocator, "indicators");
 	}
+	@JDIAction("Open slide '{0}'")
+	public void openSlide(String name) {
+		indicators().select(name);
+	}
+	@JDIAction("Open slide '{0}'")
 	public void openSlide(int index) {
 		if (index < 1)
 			throw exception("Can't select element with index '%s'. Index should be 1 or more", index);
@@ -67,17 +76,38 @@ public class Carousel<T extends ICoreElement, D> extends DataList<T, D> {
 	public void show() {
 		activeSlide.show();
 	}
-	@Override
+
+	@JDIAction("Get '{name}' text")
 	public String getText() {
 		T slide = activeSlide();
-		if (isClass(dataType, IsText.class))
+		if (isClass(initClass, IsText.class))
 			return ((IsText)slide).getText();
-		if (isClass(dataType, HasValue.class))
+		if (isClass(initClass, HasValue.class))
 			return ((HasValue)slide).getValue();
 		return slide.core().getText();
 	}
-	@Override
+
 	public String getValue() {
 		return getText();
 	}
+
+	public void setup(Field field) {
+		try {
+			Type[] types = getGenericTypes(field);
+			if (types.length == 0)
+				throw exception("Can't setup Carousel generic parameters for field '%s'. Actual 0 but expected 1 or 2",
+						field.getName());
+			if (types.length > 2)
+				throw exception("Can't setup Carousel generic parameters for field '%s'. Actual more than %s but expected 1 or 2",
+						field.getName(), types.length);
+			initClass = types[0].toString().equals("?") ? null : (Class<T>)types[0];
+			dataType = types.length == 1 || types[1].toString().equals("?") ? null : (Class<D>)types[1];
+		} catch (Exception ex) {
+			throw exception(ex, "Can't instantiate List<%s, %s> field '%s'", initClass == null
+							? "?" : initClass.getSimpleName(), dataType == null ? "?" : dataType.getSimpleName(),
+					field.getName());
+		}
+	}
+	@Override
+	public TextAssert is() { return new TextAssert().set(this); }
 }

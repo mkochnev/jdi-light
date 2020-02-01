@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
+import static com.epam.jdi.light.settings.WebSettings.APP_NAME;
 import static com.epam.jdi.light.settings.WebSettings.getDomain;
 import static com.epam.jdi.tools.StringUtils.splitCamelCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -39,11 +40,14 @@ public class WebAnnotationsUtil {
         return splitCamelCase(field.getName());
     }
 
-    public static void setDomain(Class<?> parentClass) {
-        if (parentClass != null && parentClass.isAnnotationPresent(JSite.class)) {
-            String siteDomain = parentClass.getAnnotation(JSite.class).value();
-            if (!isBlank(siteDomain))
-                WebSettings.setDomain(siteDomain);
+    public static void setDomain(Class<?> siteClass) {
+        if (siteClass != null) {
+            APP_NAME = siteClass.getSimpleName();
+            if (siteClass.isAnnotationPresent(JSite.class)) {
+                String siteDomain = siteClass.getAnnotation(JSite.class).value();
+                if (!isBlank(siteDomain))
+                    WebSettings.setDomain(siteDomain);
+            }
         }
     }
     public static String getUrlFromUri(String uri) {

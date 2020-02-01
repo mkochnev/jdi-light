@@ -64,6 +64,7 @@ import static org.openqa.selenium.PageLoadStrategy.*;
 public class WebSettings {
     public static ILogger logger = instance("JDI");
     public static String DOMAIN;
+    public static String APP_NAME;
     public static String getDomain() {
         if (DOMAIN != null)
             return DOMAIN;
@@ -133,7 +134,10 @@ public class WebSettings {
         }
     }
     public static JFunc1<String, String> SMART_SEARCH_NAME = StringUtils::splitHyphen;
+    public static boolean USE_SMART_SEARCH = true;
     public static JFunc1<IBaseElement, WebElement> SMART_SEARCH = el -> {
+        if (!USE_SMART_SEARCH)
+            return null;
         String locatorName = SMART_SEARCH_NAME.execute(el.getName());
         return el.base().timer().getResult(() -> {
             for (String template : SMART_SEARCH_LOCATORS) {
@@ -181,6 +185,7 @@ public class WebSettings {
         fillAction(p -> SMART_SEARCH_LOCATORS =
             filter(p.split(";"), l -> isNotBlank(l)), "smart.locators");
         fillAction(p -> SMART_SEARCH_NAME = getSmartSearchFunc(p), "smart.locators.toName");
+        fillAction(p -> USE_SMART_SEARCH = getBoolean(p), "smart.search");
         fillAction(p -> COMMON_CAPABILITIES.put("headless", p), "headless");
 
         loadCapabilities("chrome.capabilities.path",
@@ -197,6 +202,9 @@ public class WebSettings {
         INIT_THREAD_ID = Thread.currentThread().getId();
         if (SMART_SEARCH_LOCATORS.size() == 0)
             SMART_SEARCH_LOCATORS.add("#%s"/*, "[ui=%s]", "[qa=%s]", "[name=%s]"*/);
+    }
+    private static boolean getBoolean(String param) {
+        return !param.toLowerCase().equals("off") && !param.toLowerCase().equals("false");
     }
     private static TextTypes getTextType(String type) {
         TextTypes textType = first(getAllEnumValues(TextTypes.class),

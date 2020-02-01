@@ -75,12 +75,17 @@ public class WebPage extends DriverBase implements PageObject {
         setUrl(url, url, CONTAINS);
     }
     public WebPage(String url, String title) { this(url); this.title = title; }
+    public static void openUrl(String url, String pageName) {
+        WebPage page = new WebPage(url);
+        page.setName(isNotBlank(pageName) ? pageName : "");
+        page.open();
+    }
     public static void openUrl(String url) {
         new WebPage(url).open();
     }
     public static void openSite() {
         preInit();
-        new WebPage(getDomain()).open();
+        openUrl(getDomain(), APP_NAME);
     }
     public static void openSite(Class<?> site) {
         initSite(site);

@@ -483,7 +483,7 @@ public class UIElement extends JDIBase
     /**
      * Scroll screen view to item
      */
-    @JDIAction
+    @JDIAction(timeout = 0)
     public void show() {
         jsExecute("scrollIntoView({behavior:'auto',block:'center',inline:'center'})");
     }

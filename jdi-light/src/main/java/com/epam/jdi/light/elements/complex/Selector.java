@@ -31,7 +31,6 @@ import static java.util.Arrays.asList;
  */
 public class Selector extends UIBaseElement<UISelectAssert>
         implements ISelector, SetValue, HasPlaceholder {
-    public static By LABEL_LOCATOR = By.xpath(".//label[text()='%s']");
     protected Select asSelect() {
         return core().asSelect();
     }
