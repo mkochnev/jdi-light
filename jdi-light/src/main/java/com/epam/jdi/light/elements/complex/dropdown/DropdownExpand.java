@@ -42,7 +42,9 @@ public class DropdownExpand extends UIListBase<UISelectAssert>
     }
     @JDIAction(value = "Is '{name}' expanded", level = DEBUG)
     public boolean isExpanded() {
-        return list().noWait(WebList::isDisplayed, WebList.class);
+        try {
+            return list().noWait(WebList::isDisplayed, WebList.class);
+        } catch (Exception ex) { return false; }
     }
     @JDIAction(level = DEBUG)
     public void expand() {
@@ -58,15 +60,13 @@ public class DropdownExpand extends UIListBase<UISelectAssert>
     public void select(String value) {
         expand();
         list().select(value);
-        close();
     }
     @JDIAction("Select '{0}' in '{name}'") @Override
     public void select(int index) {
         if (index < 1)
             throw exception("Can't get element with index '%s'. Index should be 1 or more", index);
         expand();
-        list().select(index-1);
-        close();
+        list().select(index);
     }
     @JDIAction("Get selected value") @Override
     public String selected() {
@@ -77,6 +77,23 @@ public class DropdownExpand extends UIListBase<UISelectAssert>
     public boolean selected(String value) {
         expand();
         return list().selected(value);
+    }
+    @JDIAction("Check that '{name}' is displayed") @Override
+    public boolean isDisplayed() {
+        return value().isDisplayed();
+    }
+    @JDIAction("Check that '{name}' is displayed") @Override
+    public boolean isEnabled() {
+        return value().isEnabled();
+    }
+    @Override
+    public String getText() { return value().getText(); }
+    @Override
+    public String getValue() { return getText(); }
+    @Override
+    public int size() {
+        WebList list = list();
+        return list.noValidation(list::size);
     }
 
     protected boolean setupDone = false;
@@ -103,14 +120,6 @@ public class DropdownExpand extends UIListBase<UISelectAssert>
             return;
         JDropdown j = field.getAnnotation(JDropdown.class);
         setup(j.root(), j.value(), j.list(), j.expand());
-    }
-    @JDIAction("Check that '{name}' is displayed") @Override
-    public boolean isDisplayed() {
-        return value().isDisplayed();
-    }
-    @JDIAction("Check that '{name}' is displayed") @Override
-    public boolean isEnabled() {
-        return value().isEnabled();
     }
 
 }

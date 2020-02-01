@@ -6,6 +6,7 @@ import org.openqa.selenium.Alert;
 
 import static com.epam.jdi.light.driver.WebDriverFactory.getDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Roman Iovlev on 26.09.2019
@@ -46,6 +47,9 @@ public class Alerts {
     public static void validateAlert(Matcher<String> text) {
         assertThat(getAlertText(), text);
         acceptAlert();
+    }
+    public static void validateAlert(String text) {
+        validateAlert(is(text));
     }
 
     /**

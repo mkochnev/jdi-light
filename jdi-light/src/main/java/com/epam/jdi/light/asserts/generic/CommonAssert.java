@@ -9,6 +9,7 @@ import com.epam.jdi.tools.func.JFunc1;
  */
 public interface CommonAssert<A> extends JAssert, HasAssert<A> {
     A displayed();
+    A shown();
     A disappear();
     A hidden();
     A notAppear();

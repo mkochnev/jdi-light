@@ -6,11 +6,14 @@ import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
 import com.epam.jdi.light.ui.bootstrap.elements.common.*;
 import com.epam.jdi.light.ui.bootstrap.elements.complex.Carousel;
+import com.epam.jdi.light.ui.bootstrap.elements.complex.DropdownMenu;
 import com.epam.jdi.light.ui.html.elements.common.Button;
 import com.epam.jdi.light.ui.html.elements.common.Checkbox;
 import com.epam.jdi.light.ui.html.elements.common.Range;
+import com.epam.jdi.light.ui.html.elements.common.Text;
 import io.github.com.RangeControl;
 import io.github.com.custom.ButtonWithTooltip;
+import io.github.com.custom.FullName;
 import io.github.com.entities.SlideInfo;
 import io.github.com.sections.DismissAlert;
 import io.github.com.sections.Slide;
@@ -26,6 +29,11 @@ public class BootstrapPage extends WebPage {
     public static ButtonWithTooltip buttonWithTooltip;
     public static Button simpleToastButton;
     public static Checkbox acceptCheckbox;
+    public static Button expandLink;
+    public static Text hiddenText;
+    public static FullName multipleInputs;
+    public static DropdownMenu dropdownMenu;
+    public static DropdownMenu dropdownMenuSplit;
 
     //region Alerts
     public static Alert simpleAlert;

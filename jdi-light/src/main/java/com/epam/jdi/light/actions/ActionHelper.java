@@ -119,8 +119,7 @@ public class ActionHelper {
                 try {
                     exceptionMsg = safeException(ex);
                     Thread.sleep(200);
-                } catch (Exception ignore) {
-                }
+                } catch (Exception ignore) { }
             }
         } while (currentTimeMillis() - start < timeout * 1000);
         throw exception(exception, getFailedMessage(jp, exceptionMsg));

@@ -24,6 +24,10 @@ public class UIAssert<A extends UIAssert, E extends ICoreElement> extends BaseAs
         jdiAssert(element.isDisplayed() ? "displayed" : "hidden", Matchers.is("displayed"));
         return (A) this;
     }
+    @JDIAction("Assert that '{name}' is shown")
+    public A shown() {
+        return displayed();
+    }
     /**
      * Check that the element is disappeared
      */
