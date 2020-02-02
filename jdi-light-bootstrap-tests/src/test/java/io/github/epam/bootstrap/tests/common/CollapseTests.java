@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.testng.Assert.*;
 
-public class CollapseTests extends TestsInit {
+public class CollapseTests implements TestsInit {
     final String text = "Collapse text shown";
 
     @BeforeMethod

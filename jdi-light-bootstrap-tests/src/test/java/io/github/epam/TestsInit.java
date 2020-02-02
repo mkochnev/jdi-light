@@ -9,15 +9,15 @@ import static com.epam.jdi.light.elements.composite.WebPage.openSite;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 
 @SuppressWarnings("PMD.ClassNamingConventions")
-public class TestsInit {
+public interface TestsInit {
     @BeforeSuite(alwaysRun = true)
-    public static void setUp() {
+    static void setUp() {
         openSite(StaticSite.class);
         logger.toLog("Run Tests");
     }
 
     @AfterSuite(alwaysRun = true)
-    public static void tearDown() {
+    static void tearDown() {
         killAllSeleniumDrivers();
     }
 }

@@ -9,7 +9,7 @@ import static io.github.com.pages.BootstrapPage.*;
 import static io.github.epam.bootstrap.tests.BaseValidationsUtils.baseValidation;
 import static io.github.epam.states.States.shouldBeLoggedIn;
 
-public class SpinnerTests extends TestsInit {
+public class SpinnerTests implements TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();

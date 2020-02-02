@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.containsString;
  * Email: delnote@gmail.com; Skype: Dmitrii Pavlov
  */
 
-public class AlertTests extends TestsInit {
+public class AlertTests implements TestsInit {
     final String text = "Alert with index page link.";
 
     @BeforeMethod

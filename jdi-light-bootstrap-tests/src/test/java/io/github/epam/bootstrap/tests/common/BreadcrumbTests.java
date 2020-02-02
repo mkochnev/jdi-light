@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.*;
  * Email: olga_ivanova@epam.com
  */
 
-public class BreadcrumbTests extends TestsInit {
+public class BreadcrumbTests implements TestsInit {
     final String[] BREADCRUMB = new String[] {"Home", "HTML 5", "Bootstrap"};
     final String HOME_NODE = "<a href=\"https://jdi-testing.github.io/jdi-light/index.html\" target=\"_blank\">Home</a>";
 

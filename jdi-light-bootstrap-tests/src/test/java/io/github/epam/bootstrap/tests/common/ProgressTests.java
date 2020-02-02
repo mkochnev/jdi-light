@@ -11,7 +11,7 @@ import static io.github.epam.states.States.shouldBeLoggedIn;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class ProgressTests extends TestsInit {
+public class ProgressTests implements TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();

@@ -11,7 +11,7 @@ import static io.github.epam.states.States.shouldBeLoggedIn;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
-public class TooltipTests extends TestsInit {
+public class TooltipTests implements TestsInit {
 
     @BeforeMethod
     public void before() {

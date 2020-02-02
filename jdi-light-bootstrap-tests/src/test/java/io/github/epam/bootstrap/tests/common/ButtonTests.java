@@ -1,15 +1,21 @@
 package io.github.epam.bootstrap.tests.common;
 
+import com.epam.jdi.light.elements.common.Keyboard;
+import com.epam.jdi.tools.Timer;
 import io.github.epam.TestsInit;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static com.epam.jdi.light.common.Exceptions.safeException;
+import static com.epam.jdi.light.driver.WebDriverFactory.getDriver;
 import static com.epam.jdi.light.elements.common.Alerts.validateAlert;
 import static io.github.com.StaticSite.bsPage;
 import static io.github.com.pages.BootstrapPage.*;
 import static io.github.epam.bootstrap.tests.BaseValidationsUtils.baseValidation;
 import static io.github.epam.states.States.shouldBeLoggedIn;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -21,7 +27,7 @@ import static org.testng.Assert.fail;
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
 
-public class ButtonTests extends TestsInit {
+public class ButtonTests implements TestsInit {
 
     final String text = "Red button";
 
@@ -68,7 +74,8 @@ public class ButtonTests extends TestsInit {
     @Test
     public void rightClickTest() {
         redButton.rightClick();
-        validateAlert(is("Right Click"));
+        validateAlert("Right Click");
+        Keyboard.keyPress("Escape");
     }
 
     @Test

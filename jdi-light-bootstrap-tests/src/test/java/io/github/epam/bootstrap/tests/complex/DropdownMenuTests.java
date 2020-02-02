@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-public class DropdownMenuTests extends TestsInit {
+public class DropdownMenuTests implements TestsInit {
     final String value = "Elementals";
     
     @BeforeMethod

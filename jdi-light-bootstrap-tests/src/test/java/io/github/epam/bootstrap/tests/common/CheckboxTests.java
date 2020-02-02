@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.testng.Assert.*;
 
-public class CheckboxTests extends TestsInit {
+public class CheckboxTests implements TestsInit {
     final String label = "Accept terms and conditions";
 
     @BeforeMethod

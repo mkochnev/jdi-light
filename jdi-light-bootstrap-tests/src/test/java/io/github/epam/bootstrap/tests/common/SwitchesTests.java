@@ -15,7 +15,7 @@ import static io.github.epam.states.States.shouldBeLoggedIn;
  * Email: delnote@gmail.com; Skype: Dmitrii Pavlov
  */
 
-public class SwitchesTests extends TestsInit {
+public class SwitchesTests implements TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();

@@ -14,7 +14,7 @@ import static io.github.epam.states.States.shouldBeLoggedIn;
 import static org.hamcrest.Matchers.containsString;
 import static org.testng.Assert.assertEquals;
 
-public class CarouselTests extends TestsInit {
+public class CarouselTests implements TestsInit {
 	final SlideInfo firstSlide = new SlideInfo().set(s -> {
 		s.title = "First slide";
 		s.image = "Wolverin";

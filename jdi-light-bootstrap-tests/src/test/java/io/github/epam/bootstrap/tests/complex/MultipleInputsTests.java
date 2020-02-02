@@ -8,7 +8,7 @@ import static io.github.com.StaticSite.bsPage;
 import static io.github.com.pages.BootstrapPage.multipleInputs;
 import static io.github.epam.states.States.shouldBeLoggedIn;
 
-public class MultipleInputsTests extends TestsInit {
+public class MultipleInputsTests implements TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();

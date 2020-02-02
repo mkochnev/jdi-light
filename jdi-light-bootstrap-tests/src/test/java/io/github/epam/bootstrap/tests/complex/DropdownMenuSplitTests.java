@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-public class DropdownMenuSplitTests extends TestsInit {
+public class DropdownMenuSplitTests implements TestsInit {
     final String value = "Stone/Paper/Scissors";
     
     @BeforeMethod

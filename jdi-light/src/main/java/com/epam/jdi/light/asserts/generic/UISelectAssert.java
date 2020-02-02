@@ -171,4 +171,5 @@ public class UISelectAssert<A extends UISelectAssert, E extends ISelector> exten
             return elements(d -> d.equals(data));
         }
     }
+    public A and() { return (A) this; }
 }

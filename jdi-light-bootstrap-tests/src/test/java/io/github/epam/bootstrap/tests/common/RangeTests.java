@@ -12,7 +12,7 @@ import static io.github.epam.states.States.shouldBeLoggedIn;
 import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 
-public class RangeTests extends TestsInit {
+public class RangeTests implements TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();
