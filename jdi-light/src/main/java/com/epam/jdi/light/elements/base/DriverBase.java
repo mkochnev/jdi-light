@@ -5,6 +5,7 @@ import com.epam.jdi.light.driver.WebDriverFactory;
 import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.init.SiteInfo;
 import com.epam.jdi.light.elements.interfaces.base.JDIElement;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
@@ -24,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public abstract class DriverBase implements JDIElement {
     public String driverName = DRIVER_NAME;
-    public WebDriver driver() { return WebDriverFactory.getDriver(driverName); }
+    public AppiumDriver driver() { return WebDriverFactory.getDriver(driverName); }
     public JavascriptExecutor js() { return (JavascriptExecutor) driver(); }
 
     public <T> T asEntity(Class<T> entityClass) {

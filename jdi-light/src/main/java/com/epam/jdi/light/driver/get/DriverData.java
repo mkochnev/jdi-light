@@ -58,7 +58,7 @@ public class DriverData {
     public static String DOWNLOADS_DIR = mergePath(TEST_PATH, "resources", "downloads");
     public static PageLoadStrategy PAGE_LOAD_STRATEGY = NORMAL;
     public static String BROWSER_SIZE = "MAXIMIZE";
-    public static final String DEFAULT_DRIVER = "chrome";
+    public static final String DEFAULT_DRIVER = "appium";
     public static String DRIVER_NAME = DEFAULT_DRIVER;
     public static String ARGUMENTS_PROPERTY = "arguments";
 
