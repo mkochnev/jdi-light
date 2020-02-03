@@ -2,16 +2,19 @@ package com.epam.jdi.light.driver.get;
 
 import com.epam.jdi.tools.DataClass;
 import com.epam.jdi.tools.func.JFunc1;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.Exceptions.safeException;
+import static com.epam.jdi.light.driver.WebDriverFactory.isMobile;
 import static com.epam.jdi.light.driver.WebDriverFactory.isRemote;
 import static com.epam.jdi.light.driver.get.DownloadDriverManager.downloadDriver;
 import static com.epam.jdi.light.driver.get.DownloadDriverManager.wdm;
@@ -34,11 +37,14 @@ public class DriverInfo extends DataClass<DriverInfo> {
     public String properties, path;
     public JFunc1<Object, WebDriver> getDriver;
 
-    public WebDriver getDriver() {
-        return isRemote()
-                ? setupRemote()
-                : setupLocal();
+    public AppiumDriver getDriver() {
+        if(isMobile()) {
+            return setupMobile();
+        } else {
+            return null;
+        }
     }
+
     private WebDriver setupRemote() {
         try {
             return new RemoteWebDriver(new URL(getRemoteURL()), capabilities.execute(initCapabilities));
@@ -46,6 +52,16 @@ public class DriverInfo extends DataClass<DriverInfo> {
             throw exception(ex, "Failed to setup remote "+type.name+" driver");
         }
     }
+
+    private AppiumDriver setupMobile() {
+        try {
+            return new AppiumDriver(new URL(MobileDriver.DRIVER_MOBILE_URL), capabilities.execute(initCapabilities));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private WebDriver setupLocal() {
         try {
             if (isNotBlank(DRIVERS_FOLDER)) {

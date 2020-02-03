@@ -13,6 +13,7 @@ import com.epam.jdi.tools.StringUtils;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc;
 import com.epam.jdi.tools.func.JFunc1;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -115,7 +116,7 @@ public class WebSettings {
     // TODO multi properties example
     public static String TEST_PROPERTIES_PATH = "test.properties";
     public static Safe<String> TEST_NAME = new Safe<>((String) null);
-    public static String useDriver(JFunc<WebDriver> driver) {
+    public static String useDriver(JFunc<AppiumDriver> driver) {
         return WebDriverFactory.useDriver(driver);
     }
     public static String useDriver(String driverName) {
@@ -148,8 +149,8 @@ public class WebSettings {
         fillAction(p -> TIMEOUT = new Timeout(parseInt(p)), "timeout.wait.element");
         fillAction(p -> PAGE_TIMEOUT = new Timeout(parseInt(p)), "timeout.wait.page");
         fillAction(p -> setDomain(p), "domain");
-        if (DRIVER_NAME.equals(DEFAULT_DRIVER))
-            fillAction(p -> DRIVER_NAME = p, "driver");
+//        if (DRIVER_NAME.equals(DEFAULT_DRIVER))
+//            fillAction(p -> DRIVER_NAME = p, "driver");
         fillAction(p -> DRIVER_VERSION = p.equalsIgnoreCase(LATEST_VERSION)
                 ? LATEST_VERSION : (p.equalsIgnoreCase(PRELATEST_VERSION))
                     ? PRELATEST_VERSION : p, "driver.version");
@@ -185,8 +186,10 @@ public class WebSettings {
             p -> p.forEach((key,value) -> CAPABILITIES_FOR_EDGE.put(key.toString(),value.toString())));
         loadCapabilities("opera.capabilities.path",
             p -> p.forEach((key,value) -> CAPABILITIES_FOR_OPERA.put(key.toString(),value.toString())));
+        loadCapabilities("appium.capabilities.path",
+                p -> p.forEach((key, value) -> CAPABILITIES_FOR_MOBILE.put(key.toString(), value.toString())));
 
-        INIT_THREAD_ID = Thread.currentThread().getId();
+//        INIT_THREAD_ID = Thread.currentThread().getId();
         if (SMART_SEARCH_LOCATORS.size() == 0)
             SMART_SEARCH_LOCATORS.add("#%s"/*, "[ui=%s]", "[qa=%s]", "[name=%s]"*/);
     }

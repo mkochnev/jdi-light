@@ -17,6 +17,7 @@ import com.epam.jdi.tools.func.JAction;
 import com.epam.jdi.tools.func.JFunc;
 import com.epam.jdi.tools.map.MapArray;
 import com.epam.jdi.tools.pairs.Pair;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
@@ -226,7 +227,7 @@ public class PageFactory {
     }
 
     // region Selenium PageFactory
-    public static void initElements(JFunc<WebDriver> driver, Object... pages) {
+    public static void initElements(JFunc<AppiumDriver> driver, Object... pages) {
         preInit();
         useDriver(driver);
         initElements(pages);
@@ -260,7 +261,7 @@ public class PageFactory {
         initElements(driver, page);
         return page;
     }
-    public static void initElements(WebDriver driver, Object page) {
+    public static void initElements(AppiumDriver driver, Object page) {
         initElements(() -> driver, page);
     }
     public static void initElements(ElementLocatorFactory factory, Object page) {
