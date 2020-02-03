@@ -40,12 +40,6 @@ public class Keyboard {
             throw exception(ex, "Input file "+path+" failed with exception");
         }
     }
-    public static void mouseClick(int x, int y) {
-        int button1Down = InputEvent.BUTTON1_DOWN_MASK;
-        getRobot().mouseMove(x, y);
-        getRobot().mousePress(button1Down);
-        getRobot().mouseRelease(button1Down);
-    }
     public static void keyPress(String key) {
         keyPress(getKeyCode(key));
     }
@@ -79,6 +73,6 @@ public class Keyboard {
     }
     private static List<Field> getKeys() {
         return LinqUtils.filter(KeyEvent.class.getDeclaredFields(),
-            f -> isStatic(f.getModifiers()) && f.getName().startsWith("VK_"));
+                f -> isStatic(f.getModifiers()) && f.getName().startsWith("VK_"));
     }
 }
