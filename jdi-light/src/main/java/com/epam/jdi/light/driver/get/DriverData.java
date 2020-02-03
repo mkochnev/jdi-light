@@ -3,7 +3,6 @@ package com.epam.jdi.light.driver.get;
 import com.epam.jdi.tools.func.JAction;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc1;
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -59,7 +58,7 @@ public class DriverData {
     public static String DOWNLOADS_DIR = mergePath(TEST_PATH, "resources", "downloads");
     public static PageLoadStrategy PAGE_LOAD_STRATEGY = NORMAL;
     public static String BROWSER_SIZE = "MAXIMIZE";
-    public static final String DEFAULT_DRIVER = "appium";
+    public static final String DEFAULT_DRIVER = "chrome";
     public static String DRIVER_NAME = DEFAULT_DRIVER;
     public static String ARGUMENTS_PROPERTY = "arguments";
 
@@ -253,13 +252,6 @@ public class DriverData {
                 () -> cap.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome"));
         CAPABILITIES_FOR_MOBILE.forEach(cap::setCapability);
     };
-    // GET DRIVER
-    public static JFunc1<AppiumDriver, AppiumDriver> DRIVER_SETTINGS = DriverData::maximizeScreen;
-
-    private static AppiumDriver maximizeScreen(AppiumDriver driver) {
-
-        return driver;
-    }
 
     private static String getBrowserSizeOption() {
         List<String> groups = matches(BROWSER_SIZE, "([0-9]+)[^0-9]*([0-9]+)");

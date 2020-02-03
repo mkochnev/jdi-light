@@ -68,12 +68,9 @@ public class WebDriverFactory {
     }
 
     private static AppiumDriver initDriver(DriverTypes type) {
-        AppiumDriver driver = Switch(type).get(
+       return Switch(type).get(
                 Value(APPIUM, t -> MOBILE_INFO.getDriver())
         );
-        if (driver == null)
-            throw exception("Unknown driver: " + type);
-        return DRIVER_SETTINGS.execute(driver);
     }
 
     // GET DRIVER
