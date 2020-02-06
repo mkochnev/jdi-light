@@ -156,8 +156,7 @@ public class DriverData {
             setupErrors.add(format("%s: %s", name, safeException(ex)));
         }
     }
-
-    public static JAction1<ChromeOptions> CHROME_OPTIONS = cap -> {
+    public static void defaultChromeOptions(ChromeOptions cap) {
         HashMap<String, Object> chromePrefs = new HashMap<>();
         setUp("Set Chrome Prefs", () -> {
             chromePrefs.put("credentials_enable_service", false);
@@ -168,18 +167,19 @@ public class DriverData {
             chromePrefs.put("profile.password_manager_enabled", false);
         });
         setUp("Chrome: '--disable-web-security', '--disable-extensions', 'test-type'",
-            () -> cap.addArguments("--disable-web-security", "--disable-extensions", "test-type"));
+                () -> cap.addArguments("--disable-web-security", "--disable-extensions", "test-type"));
         setUp("Chrome: PageLoadStrategy:" + PAGE_LOAD_STRATEGY,
-            () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
+                () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
         setUp("Chrome: ACCEPT_SSL_CERTS:true",
-            () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
+                () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
         setUp("Chrome: " + UNEXPECTED_ALERT_BEHAVIOR + "=" + ACCEPT,
-            () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
+                () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
         setUp("Chrome: setExperimentalOption: prefs",
-            () -> cap.setExperimentalOption("prefs", chromePrefs));
+                () -> cap.setExperimentalOption("prefs", chromePrefs));
         // Capabilities from settings
         CAPABILITIES_FOR_CHROME.forEach((property, value) -> setupCapability(cap, property, value));
-    };
+    }
+    public static JAction1<ChromeOptions> CHROME_OPTIONS = DriverData::defaultChromeOptions;
 
     public static void setupCapability(ChromeOptions cap, String property, String value){
         if(!property.equals(ARGUMENTS_PROPERTY)){
@@ -189,7 +189,7 @@ public class DriverData {
         }
     }
 
-    public static JAction1<FirefoxOptions> FIREFOX_OPTIONS = cap -> {
+    public static void defaultFirefoxOptions(FirefoxOptions cap) {
         FirefoxProfile firefoxProfile = new FirefoxProfile();
         setUp("Set FirefoxProfile", () -> {
             firefoxProfile.setAssumeUntrustedCertificateIssuer(false);
@@ -206,46 +206,48 @@ public class DriverData {
             firefoxProfile.setPreference("network.http.phishy-userpass-length", 255);
         });
         setUp("Firefox: PageLoadStrategy:" + PAGE_LOAD_STRATEGY,
-            () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
+                () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
         setUp("Firefox: ACCEPT_SSL_CERTS: true",
-            () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
+                () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
         setUp("Firefox: UNEXPECTED_ALERT_BEHAVIOR, ACCEPT",
-            () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
+                () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
         setUp("Firefox: Firefox Profile",
-            () -> cap.setProfile(firefoxProfile));
+                () -> cap.setProfile(firefoxProfile));
         // Capabilities from settings
         CAPABILITIES_FOR_FF.forEach(cap::setCapability);
-    };
+    }
+    public static JAction1<FirefoxOptions> FIREFOX_OPTIONS = DriverData::defaultFirefoxOptions;
 
-    public static JAction1<InternetExplorerOptions> IE_OPTIONS = cap -> {
+    public static void defaultIEOptions(InternetExplorerOptions cap) {
         setUp("IE: introduceFlakinessByIgnoringSecurityDomains",
-            cap::introduceFlakinessByIgnoringSecurityDomains);
+                cap::introduceFlakinessByIgnoringSecurityDomains);
         setUp("ignoreZoomSettings",
-            cap::ignoreZoomSettings);
+                cap::ignoreZoomSettings);
         setUp("IE: requireWindowFocus:true",
-            () -> cap.setCapability("requireWindowFocus", true));
+                () -> cap.setCapability("requireWindowFocus", true));
         setUp("IE: PageLoadStrategy:" + PAGE_LOAD_STRATEGY,
-            () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
+                () -> cap.setPageLoadStrategy(PAGE_LOAD_STRATEGY));
         setUp("IE: takeFullPageScreenshot",
-            cap::takeFullPageScreenshot);
+                cap::takeFullPageScreenshot);
         setUp("IE: ACCEPT_SSL_CERTS: true",
-            () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
+                () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
         setUp("IE: destructivelyEnsureCleanSession",
-            cap::destructivelyEnsureCleanSession);
+                cap::destructivelyEnsureCleanSession);
         setUp("IE: UNEXPECTED_ALERT_BEHAVIOR: ACCEPT)",
-            () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
+                () -> cap.setCapability(UNEXPECTED_ALERT_BEHAVIOR, ACCEPT));
         setUp("IE: SUPPORTS_JAVASCRIPT",
-            () -> cap.is(SUPPORTS_JAVASCRIPT));
+                () -> cap.is(SUPPORTS_JAVASCRIPT));
         setUp("IE: ACCEPT_SSL_CERTS: true",
-            () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
+                () -> cap.setCapability(ACCEPT_SSL_CERTS, true));
         // Capabilities from settings
         CAPABILITIES_FOR_IE.forEach(cap::setCapability);
-    };
-    public static JAction1<EdgeOptions> EDGE_OPTIONS = cap -> {
+    }
+    public static JAction1<InternetExplorerOptions> IE_OPTIONS = DriverData::defaultIEOptions;
 
-    };
-    public static JAction1<OperaOptions> OPERA_OPTIONS = cap -> {
+    public static void defaultEdgeOptions(EdgeOptions cap) { }
+    public static JAction1<EdgeOptions> EDGE_OPTIONS = DriverData::defaultEdgeOptions;
 
-    };
+    public static void defaultOperaOptions(OperaOptions cap) { }
+    public static JAction1<OperaOptions> OPERA_OPTIONS = DriverData::defaultOperaOptions;
 
 }
