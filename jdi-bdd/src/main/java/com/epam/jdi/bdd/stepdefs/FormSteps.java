@@ -37,7 +37,7 @@ public class FormSteps {
 		getForm("Login form").submit(getMapFromJson(jsonName, "json.test.data"));
 	}
 
-	@When("^(?:I |)fill form \"([^\"]*)\" with data:$")
+	@When("^(?:I |)fill (?:form |)\"([^\"]*)\" with data:$")
 	public void fillForm(String name, DataTable data) {
 		getForm(name).fill(getMapFromTable(data));
 	}

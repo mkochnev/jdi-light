@@ -241,7 +241,12 @@ public class WebSettings {
                 return StringUtils::toPascalCase;
             case "UPPER_SNAKE_CASE":
                 return StringUtils::toUpperSnakeCase;
-            default: return StringUtils::toKebabCase;
+            case "First Upper Case":
+                return StringUtils::splitCamelCase;
+            case "ALL UPPER CASE":
+                return value -> StringUtils.splitCamelCase(value).toUpperCase();
+            default:
+                return StringUtils::toKebabCase;
         }
     }
 

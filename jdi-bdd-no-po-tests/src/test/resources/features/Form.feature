@@ -10,7 +10,7 @@ Feature: Form
     Then the form "Contact Form" data equals to "Roman Contacts"
 
   Scenario: fill Contact Form from table
-    When I fill form "Contact Form" with data:
+    When I fill "Contact Form" with data:
       | Name              | Roman |
       | Last Name         | Iovlev |
       | Position          | ChiefQA |

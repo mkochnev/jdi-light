@@ -3,23 +3,24 @@ package io.github.epam.sections;
 import com.epam.jdi.light.elements.complex.Selector;
 import com.epam.jdi.light.elements.composite.Form;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.Css;
+import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.XPath;
 import io.github.epam.entities.User;
 import org.openqa.selenium.WebElement;
 
 public class ContactForm extends Form<User> {
-	@Css("#passport") public WebElement passport;
-	@Css("#name") public WebElement name;
-	@Css("#last-name") public WebElement lastName;
-	@Css("#position") public WebElement position;
-	@Css("#passport-number") public WebElement passportNumber;
-	@Css("#passport-seria") public WebElement passportSeria;
+	@UI("#passport") public WebElement passport;
+	@UI("#name") public WebElement name;
+	@UI("#last-name") public WebElement lastName;
+	@UI("#position") public WebElement position;
+	@UI("#passport-number") public WebElement passportNumber;
+	@UI("#passport-seria") public WebElement passportSeria;
 
-	@Css("#gender") public Selector gender;
-	@Css("div[ui=combobox] input") public WebElement religion;
+	@UI("#gender") public Selector gender;
+	@UI("div[ui=combobox] input") public WebElement religion;
 
-	@Css("#accept-conditions") public WebElement acceptConditions;
-	@Css("textarea") public WebElement description;
+	@UI("#accept-conditions") public WebElement acceptConditions;
+	@UI("textarea") public WebElement description;
 
 	@XPath(".//button[@type='submit']") public WebElement submit;
 }
