@@ -66,7 +66,8 @@ public class WebDriverFactory {
             Value(FIREFOX, t -> FF_INFO.getDriver()),
             Value(IE, t -> IE_INFO.getDriver()),
             Value(OPERA, t -> CHROME_INFO.getDriver()),
-            Value(EDGE, t -> CHROME_INFO.getDriver())
+            Value(EDGE, t -> CHROME_INFO.getDriver()),
+            Value(APPIUM, t -> APPIUM_INFO.getDriver())
         );
         if (driver == null)
             throw exception("Unknown driver: " + type);

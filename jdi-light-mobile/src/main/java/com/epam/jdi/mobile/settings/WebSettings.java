@@ -112,7 +112,6 @@ public class WebSettings {
         return DOMAIN != null && DOMAIN.contains("://");
     }
     public static String TEST_GROUP = "";
-    // TODO multi properties example
     public static String TEST_PROPERTIES_PATH = "test.properties";
     public static Safe<String> TEST_NAME = new Safe<>((String) null);
     public static String useDriver(JFunc<WebDriver> driver) {
