@@ -12,8 +12,11 @@ import static com.epam.jdi.light.elements.init.UIFactory.$$;
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
 public class RadioButtons extends UIListBase<UISelectAssert<UISelectAssert, RadioButtons>> {
+    public RadioButtons() {
+        base().setLocator("input[type=radio]");
+    }
     @Override
     public WebList list() {
-        return $$("input[type=radio]", this).setUIElementName(LABEL);
+        return super.list().setUIElementName(LABEL);
     }
 }

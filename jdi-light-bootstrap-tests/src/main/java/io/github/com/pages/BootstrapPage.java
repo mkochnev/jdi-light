@@ -1,6 +1,5 @@
 package io.github.com.pages;
 
-import com.epam.jdi.light.elements.common.Label;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.Checklist;
 import com.epam.jdi.light.elements.complex.WebList;
@@ -29,7 +28,7 @@ public class BootstrapPage extends WebPage {
     public static Progress progressbar, multiProgressbar;
     public static Breadcrumb breadcrumb;
     public static Checkbox acceptCheckbox;
-    public static Checklist numbers;
+    @UI(".checkbox-input") public static Checklist checkNumbers;
     public static RadioButtons airClassOptions;
     public static Switch switcher, disabledSwitcher;
     public static ButtonWithTooltip buttonWithTooltip;

@@ -25,16 +25,11 @@ public class BaseValidationsUtils {
         logger.info("Check hidden");
         assertFalse(el.isHidden());
         logger.info("Check getLocation");
-        Point location = el.core().getLocation();
+        Point location = el.getLocation();
         assertTrue(location.x >= 0 && location.y >= 0, "Location: " + location);
         logger.info("Check getSize");
-        Dimension size = el.core().getSize();
+        Dimension size = el.getSize();
         assertTrue(size.height > 0 && size.width > 0, "Size: " + location);
-        //Rectangle rect = el.getRect();
-        //assertTrue(rect.height > 0 && rect.width > 0 && rect.x > 0 && rect.y > 0, "Size: " + location);
-        logger.info("Check setAttribute");
-        el.core().setAttribute("test-jdi", "test-value");
-        assertEquals(el.attr("test-jdi"), "test-value");
         logger.info("Check highlight");
         el.highlight("blue");
         el.highlight();

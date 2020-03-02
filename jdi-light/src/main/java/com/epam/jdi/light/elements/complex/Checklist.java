@@ -19,12 +19,12 @@ import static com.epam.jdi.tools.PrintUtils.print;
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
 public class Checklist extends UIListBase<ChecklistAssert> implements IsChecklist {
+    public Checklist() {
+        base().setLocator("input[type=checkbox]");
+    }
     @Override
     public WebList list() {
         return super.list().setUIElementName(LABEL);
-    }
-    public Checklist() {
-        base().setLocator("input[type=checkbox]");
     }
     /**
      * Selects a value in checklist

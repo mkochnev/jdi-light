@@ -8,6 +8,7 @@ import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.interfaces.base.HasUIList;
+import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
 import com.epam.jdi.light.elements.interfaces.base.SetValue;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.func.JAction1;
@@ -18,6 +19,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -202,11 +205,11 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         if (index < startIndex)
             throw exception("Can't get element with index '%s'. Index should be %s or more", index, startIndex);
         int getIndex = index - startIndex;
-        if (locator.isEmpty() && elements.isUseCache() && elements.get().size() > getIndex)
+        if (locator.isEmpty() && elements.isUseCache() && elements.get().size() >= getIndex)
             return elements.get().get(getIndex).value;
         return (locator.isTemplate()
             ? tryGetByIndex(index)
-            : initElement(() -> getList(getIndex+1).get(getIndex)))
+            : initElement(() -> getList(getIndex).get(getIndex)))
         .setName(nameFromIndex(index));
     }
     protected UIElement tryGetByIndex(int index) {
@@ -276,25 +279,23 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @JDIAction("Check '{0}' checkboxes in '{name}' checklist")
     public void check(int... indexes) {
         List<Integer> listIndexes = toList(indexes);
-        for (int i = 0; i < values().size(); i++) {
+        for (int i = startIndex; i < startIndex + values().size(); i++) {
             UIElement value = get(i);
             if (value.isDisabled()) continue;
-            if (selected(value) && !listIndexes.contains(i+1)
-                    || !selected(value) && listIndexes.contains(i+1))
+            if (selected(value) && !listIndexes.contains(i)
+                    || !selected(value) && listIndexes.contains(i))
                 value.click();
         }
     }
     @JDIAction("Uncheck '{0}' checkboxes in  '{name}' checklist")
     public void uncheck(int... indexes) {
-        if (indexes.length > 0 && list().get(indexes[0]-1).isDisplayed()) {
-            List<Integer> listIndexes = toList(indexes);
-            for (int i = 0; i < values().size(); i++) {
-                UIElement value = get(i);
-                if (value.isDisabled()) continue;
-                if (selected(value) && listIndexes.contains(i+1)
-                        || !selected(value) && !listIndexes.contains(i+1))
-                    value.click();
-            }
+        List<Integer> listIndexes = toList(indexes);
+        for (int i = startIndex; i < startIndex + values().size(); i++) {
+            UIElement value = get(i);
+            if (value.isDisabled()) continue;
+            if (selected(value) && listIndexes.contains(i)
+                    || !selected(value) && !listIndexes.contains(i))
+                value.click();
         }
     }
     public <TEnum extends Enum> void check(TEnum... values) {
@@ -449,12 +450,12 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     @JDIAction("Get list of enabled values for '{name}'")
     public List<String> listEnabled() {
-        return noValidation(() -> ifSelect(ui -> getByType(ui, CanBeSelected.class).isSelected(), this::getElementName));
+        return noValidation(() -> ifSelect(UIElement::isEnabled, this::getElementName));
     }
 
     @JDIAction("Get list of disabled values for '{name}'")
     public List<String> listDisabled() {
-        return noValidation(() -> ifSelect(UIElement::isSelected, this::getElementName));
+        return noValidation(() -> ifSelect(UIElement::isDisabled, this::getElementName));
     }
 
     @JDIAction(value = "Check that '{name}' is displayed", timeout = 0)
@@ -470,7 +471,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     @JDIAction(value = "Check that '{name}' is enabled", timeout = 0)
     public boolean isEnabled() {
-        return isNotEmpty() && get(0).isEnabled();
+        return isNotEmpty() && get(startIndex).isEnabled();
     }
 
     @JDIAction(value = "Check that '{name}' is disabled", timeout = 0)
@@ -488,12 +489,12 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     @JDIAction(level = DEBUG)
     public void hover() {
-        get(0).hover();
+        get(startIndex).hover();
     }
 
     @JDIAction(level = DEBUG)
     public void show() {
-        get(0).show();
+        get(startIndex).show();
     }
     public UISelectAssert<UISelectAssert<?,?>, WebList> is() {
         refresh();
@@ -538,7 +539,15 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     public boolean isEmpty() { return size() == 0; }
     public boolean isNotEmpty() { return size() > 0; }
-
+    public Point getLocation() {
+        return get(startIndex).getLocation();
+    }
+    public Dimension getSize() {
+        Point lFirst = first().getLocation();
+        Point lLast = last().getLocation();
+        Dimension dLast = last().getSize();
+        return new Dimension(lLast.x+dLast.width-lFirst.x, lLast.y+dLast.height-lFirst.y);
+    }
     public void offCache() {
         super.offCache();
         elements.useCache(false);

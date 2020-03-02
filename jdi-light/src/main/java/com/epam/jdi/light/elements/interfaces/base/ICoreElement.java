@@ -5,6 +5,8 @@ import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.tools.map.MapArray;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 
 import java.util.List;
 
@@ -27,6 +29,8 @@ public interface ICoreElement extends IBaseElement {
     default boolean isHidden() { return !isDisplayed(); }
     default void highlight(String color) { core().highlight(); }
     default void highlight() { core().highlight(); }
+    default Point getLocation() { return core().getLocation(); }
+    default Dimension getSize() { return core().getSize(); }
     default void show() { core().show(); }
     default Boolean isVisible() { return core().isVisible(); }
     default String attr(String name) { return core().attr(name); }
