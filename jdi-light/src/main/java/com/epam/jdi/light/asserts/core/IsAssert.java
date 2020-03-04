@@ -9,7 +9,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import static com.epam.jdi.light.asserts.core.SoftAssert.jdiAssert;
-import static org.hamcrest.Matchers.containsString;
 
 /**
  * Created by Roman Iovlev on 26.09.2019

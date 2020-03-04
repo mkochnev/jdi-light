@@ -4,7 +4,6 @@ import com.epam.jdi.light.asserts.generic.table.DataTableAssert;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.composite.Section;
-import com.epam.jdi.light.elements.init.InitActions;
 import com.epam.jdi.light.elements.interfaces.base.HasValue;
 import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.map.MapArray;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 
 import static com.epam.jdi.light.asserts.core.SoftAssert.assertSoft;
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.common.UIUtils.create;
 import static com.epam.jdi.light.elements.pageobjects.annotations.WebAnnotationsUtil.getElementName;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
 import static com.epam.jdi.tools.LinqUtils.*;
@@ -449,7 +447,7 @@ public class DataTable<L extends Section, D> extends BaseTable<DataTable<L, D>, 
     @Override
     public void setup(Field field) {
         super.setup(field);
-        Type[] types = InitActions.getGenericTypes(field);
+        Type[] types = getGenericTypes(field);
         if (types.length != 2)
             return;
         try {

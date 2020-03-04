@@ -5,7 +5,6 @@ import com.epam.jdi.light.asserts.generic.HasAssert;
 import com.epam.jdi.light.common.ElementArea;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.common.TextTypes;
-import com.epam.jdi.light.common.UIUtils;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.interfaces.base.*;
@@ -31,7 +30,6 @@ import static com.epam.jdi.light.asserts.core.SoftAssert.jdiAssert;
 import static com.epam.jdi.light.common.ElementArea.*;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.TextTypes.*;
-import static com.epam.jdi.light.common.UIUtils.intValue;
 import static com.epam.jdi.light.driver.ScreenshotMaker.SCREEN_FILE_SUFFIX;
 import static com.epam.jdi.light.elements.composite.WebPage.windowScreenshot;
 import static com.epam.jdi.light.elements.composite.WebPage.zoomLevel;
@@ -40,6 +38,7 @@ import static com.epam.jdi.light.elements.init.UIFactory.$$;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
+import static com.epam.jdi.tools.JsonUtils.getInt;
 import static com.epam.jdi.tools.LinqUtils.valueOrDefault;
 import static com.epam.jdi.tools.PrintUtils.print;
 import static com.epam.jdi.tools.switcher.SwitchActions.Case;
@@ -210,7 +209,7 @@ public class UIElement extends JDIBase
     @JDIAction(level = DEBUG)
     public Rectangle getPosition() {
         Map<String, Object> map = (Map<String, Object>)js().executeScript("const rect = arguments[0].getBoundingClientRect();return {x:rect.x,y:rect.y,width:rect.width,height:rect.height};", getWebElement());
-        return new Rectangle(intValue(map.get("x")), intValue(map.get("y")), intValue(map.get("height")), intValue(map.get("width")));
+        return new Rectangle(getInt(map.get("x")), getInt(map.get("y")), getInt(map.get("height")), getInt(map.get("width")));
     }
     /**
      * Get element css value

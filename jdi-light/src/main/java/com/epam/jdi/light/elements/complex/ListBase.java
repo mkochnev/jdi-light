@@ -17,7 +17,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import static com.epam.jdi.light.elements.init.PageFactory.initJdiField;
 import static com.epam.jdi.light.elements.init.PageFactory.setupFieldUsingRules;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.WebSettings.logger;
+import static com.epam.jdi.tools.ReflectionUtils.getGenericTypes;
 import static com.epam.jdi.tools.ReflectionUtils.getValueField;
 
 /**
@@ -247,7 +247,7 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
     public void setup(Field field) {
         Type[] types;
         try {
-            types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+            types = getGenericTypes(field);
         } catch (Exception ex) { return; }
         if (types.length != 1) return;
         try {
@@ -255,7 +255,7 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
             if (initClass == WebElement.class)
                 initClass = UIElement.class;
             this.initClass = initClass;
-        } catch (Exception ex) { throw  exception(ex, "Can't init WebList. Weblist elements should extend UIElement"); }
+        } catch (Exception ex) { throw  exception(ex, "Can't init WebList. WebList elements should extend UIElement"); }
     }
     private T toT(UIElement el) {
         try {
@@ -281,8 +281,8 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
             return expectedField.getName();
         List<Field> titles = LinqUtils.filter(fields, f -> f.getType() == Label.class);
         return titles.size() == 1
-                ? titles.get(0).getName()
-                : null;
+            ? titles.get(0).getName()
+            : null;
     };
     protected String titleFieldName = null;
     protected String elementTitle(UIElement el) {

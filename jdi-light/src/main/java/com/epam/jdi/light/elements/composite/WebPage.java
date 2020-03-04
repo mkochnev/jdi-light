@@ -23,9 +23,6 @@ import java.util.function.Supplier;
 
 import static com.epam.jdi.light.common.CheckTypes.*;
 import static com.epam.jdi.light.common.Exceptions.exception;
-import static com.epam.jdi.light.common.PageChecks.EVERY_PAGE;
-import static com.epam.jdi.light.common.PageChecks.NEW_PAGE;
-import static com.epam.jdi.light.common.UIUtils.getDouble;
 import static com.epam.jdi.light.common.VisualCheckPage.CHECK_NEW_PAGE;
 import static com.epam.jdi.light.common.VisualCheckPage.CHECK_PAGE;
 import static com.epam.jdi.light.driver.ScreenshotMaker.getPath;
@@ -38,6 +35,7 @@ import static com.epam.jdi.light.logger.LogLevels.*;
 import static com.epam.jdi.light.settings.TimeoutSettings.PAGE_TIMEOUT;
 import static com.epam.jdi.light.settings.TimeoutSettings.TIMEOUT;
 import static com.epam.jdi.light.settings.WebSettings.*;
+import static com.epam.jdi.tools.JsonUtils.getDouble;
 import static com.epam.jdi.tools.LinqUtils.map;
 import static com.epam.jdi.tools.PathUtils.mergePath;
 import static com.epam.jdi.tools.PrintUtils.print;
