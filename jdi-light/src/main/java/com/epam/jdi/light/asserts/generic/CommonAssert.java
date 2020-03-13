@@ -12,6 +12,7 @@ public interface CommonAssert<A> extends JAssert, HasAssert<A> {
     A displayed();
     A disappear();
     A hidden();
+    A shown();
     A notAppear();
     A notAppear(int timeoutSec);
     A enabled();
@@ -22,6 +23,7 @@ public interface CommonAssert<A> extends JAssert, HasAssert<A> {
     A css(String css, String value);
     A hasClass(String className);
     A hasAttribute(String className);
+    A visible();
 
     default A and() { return (A) this; }
     default A condition(JFunc1<A, A> t) {
