@@ -212,6 +212,11 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     public List<String> values(TextTypes type) {
         return list().values(type);
     }
+
+    public List<String> attrs(String attrName) {
+        return list().attrs(attrName);
+    }
+
     public List<String> listEnabled() {
         return list().listEnabled();
     }
@@ -219,9 +224,6 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
         return list().listDisabled();
     }
 
-    public List<String> attrs(String attrName) {
-        return list().attrs(attrName);
-    }
     @Override
     public boolean isDisplayed() {
         return list().isDisplayed();

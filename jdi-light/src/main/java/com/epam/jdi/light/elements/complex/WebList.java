@@ -474,8 +474,8 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return values();
     }
     @JDIAction("Get list of attributes for '{name}'")
-    public List<String> attrs(String value) {
-        return noValidation(() -> map(e -> e.attr(value)));
+    public List<String> attrs(String attrName) {
+        return noValidation(() -> map(e -> e.attr(attrName)));
     }
 
     @JDIAction("Get list of enabled values for '{name}'")

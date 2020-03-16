@@ -16,6 +16,9 @@ public class DataListTests implements TestsInit {
     private String text = "Coconut";
     private String[] values = {"Chocolate", "Coconut", "Mint", "Strawberry", "Vanilla"};
 
+    private String text = "Coconut";
+    private String[] values = {"Chocolate", "Coconut", "Mint", "Strawberry", "Vanilla"};
+
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();
@@ -112,5 +115,15 @@ public class DataListTests implements TestsInit {
     @Test
     public void baseValidationTest() {
         baseValidation(iceCream);
+    }
+
+    @Test
+    public void valuesTest() {
+        iceCream.is().values(values);
+    }
+
+    @Test
+    public void attrsTest() {
+        assertEquals(iceCream.list().attrs("value").toArray(), values);
     }
 }
