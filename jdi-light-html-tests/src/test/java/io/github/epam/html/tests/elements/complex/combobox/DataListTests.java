@@ -13,6 +13,8 @@ import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.*;
 
 public class DataListTests implements TestsInit {
+    private String text = "Coconut";
+    private String[] values = {"Chocolate", "Coconut", "Mint", "Strawberry", "Vanilla"};
 
     @BeforeMethod
     public void before() {
@@ -20,7 +22,6 @@ public class DataListTests implements TestsInit {
         html5Page.shouldBeOpened();
         iceCream.select(text);
     }
-    String text = "Coconut";
 
     @Test
     public void getValueTest() {
@@ -86,7 +87,15 @@ public class DataListTests implements TestsInit {
         assertEquals(iceCream.label().getText(), "Choose your lovely icecream");
         iceCream.label().is().text(containsString("lovely icecream"));
     }
+    @Test
+    public void valuesTest() {
+        iceCream.is().values(values);
+    }
 
+    @Test
+    public void attrsTest() {
+        assertEquals(iceCream.list().attrs("value").toArray(), values);
+    }
     @Test
     public void isValidationTest() {
         iceCream.is().enabled();

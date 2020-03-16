@@ -639,6 +639,14 @@ public class UIElement extends JDIBase
         String result = timer().getResult(() -> noWait(() -> type.func.execute(this)));
         return result;
     }
+    @Override
+    public UIElement waitSec(int timeout) {
+        return (UIElement) super.waitSec(timeout);
+    }
+    @Override
+    public UIElement noWait() {
+        return (UIElement) super.noWait();
+    }
     public static JFunc1<UIElement, String> SMART_GET_TEXT = ui -> {
         String text = ui.text(TEXT);
         if (isNotBlank(text))

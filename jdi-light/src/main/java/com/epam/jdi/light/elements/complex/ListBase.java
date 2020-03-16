@@ -13,6 +13,7 @@ import com.epam.jdi.light.elements.pageobjects.annotations.Title;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.func.JFunc1;
+import com.epam.jdi.tools.map.MapArray;
 import com.epam.jdi.tools.map.MultiMap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -202,25 +203,24 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     public boolean selected(String option) {
         return list().selected(option);
     }
-
     public List<String> checked() {
         return list().checked();
     }
-
     public List<String> values() {
         return list().values();
     }
-
     public List<String> values(TextTypes type) {
         return list().values(type);
     }
-
     public List<String> listEnabled() {
         return list().listEnabled();
     }
-
     public List<String> listDisabled() {
         return list().listDisabled();
+    }
+
+    public List<String> attrs(String attrName) {
+        return list().attrs(attrName);
     }
     @Override
     public boolean isDisplayed() {
