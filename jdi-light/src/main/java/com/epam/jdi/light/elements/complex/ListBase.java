@@ -36,15 +36,11 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     extends UIBaseElement<A> implements IList<T>, ISetup, ISelector {
     protected WebList list;
     public WebList list() {
-        if (list == null) {
-            list = new WebList(core()).setUIElementName(this::elementTitle)
-                .setName(getName());
-        }
-        return list;
+        return new WebList(core()).setUIElementName(this::elementTitle).setName(getName());
     }
 
     ListBase() {}
-    ListBase(By locator) { list = new WebList(locator); }
+    ListBase(By locator) { base().setLocator(locator); }
     ListBase(List<WebElement> elements) { list = new WebList(elements); }
     public Class<?> initClass = UIElement.class;
 
@@ -298,5 +294,10 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     }
     public boolean isEmpty() { return size() == 0; }
     public boolean isNotEmpty() { return size() > 0; }
+    @Override
+    public void offCache() {
+        super.offCache();
+        list().offCache();
+    }
 
 }

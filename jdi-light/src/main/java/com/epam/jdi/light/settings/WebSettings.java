@@ -86,7 +86,7 @@ public class WebSettings {
     }
     public static String printSmartLocators(IBaseElement el) {
         try {
-            return "smart: " + format(ELEMENT.smartTemplate, ELEMENT.smartName.value.execute(el.getName()));
+            return "smart: " + format(ELEMENT.smartTemplate, ELEMENT.smartName.value.execute(el.base().fieldName));
         } catch (Exception ex) {
             return format("Can't define smart locator(%s, %s)", ELEMENT.smartTemplate, ELEMENT.smartName.key);
         }
@@ -96,7 +96,9 @@ public class WebSettings {
             ELEMENT.useSmartSearch == ONLY_UI && el.base().locator == null ||
             ELEMENT.useSmartSearch == UI_AND_ELEMENTS && el.base().locator == null && isInterface(el.getClass(), PageObject.class))
             return null;
-        String locatorName = ELEMENT.smartName.value.execute(el.getName());
+        if (isBlank(el.base().fieldName))
+            throw exception("Failed to find '%s' varName: '%s'", el.getName(), el.base().fieldName);
+        String locatorName = ELEMENT.smartName.value.execute(el.base().fieldName);
         return el.base().timer().getResult(() -> {
             String locator = format(ELEMENT.smartTemplate, locatorName);
             UIElement ui = (ELEMENT.smartTemplate.equals("#%s")
@@ -105,8 +107,8 @@ public class WebSettings {
                     .setup(e -> e.setName(el.getName()).noWait());
             try {
                 return ui.getWebElement();
-            } catch (Exception ignore) {
-                throw exception("Element '%s' has no locator and Smart Search failed (%s). Please add locator to element or be sure that element can be found using Smart Search", el.getName(), printSmartLocators(el));
+            } catch (Exception ex) {
+                throw exception(ex, "Element '%s' has no locator and Smart Search failed (%s). Please add locator to element or be sure that element can be found using Smart Search", el.getName(), printSmartLocators(el));
             }
         });
     };

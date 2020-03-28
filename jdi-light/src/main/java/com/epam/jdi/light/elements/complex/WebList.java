@@ -80,9 +80,10 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     public WebList(JDIBase base) {
         super(base);
+        elements.useCache(base.isUseCache());
     }
     public WebList(JDIBase base, String locator, String name, Object parent) {
-        super(base);
+        this(base);
         setLocator(locator);
         setName(name);
         setParent(parent);
@@ -155,6 +156,8 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         }
     }
     protected boolean hasKey(String value) {
+        if (!isUseCache())
+            return false;
         List<String> keys = elements(1).keys();
         if (keys.isEmpty())
             return false;
@@ -168,24 +171,32 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
      */
     @JDIAction(level = DEBUG) @Override
     public UIElement get(String value) {
-        return !locator.isTemplate() && hasKey(value)
-            ? elements(1).get(value)
-            : getUIElement(value);
-    }
-
-    public UIElement getUIElement(String value) {
+        if (!locator.isTemplate() && hasKey(value))
+            return elements(1).get(value);
         if (locator.isTemplate())
             return new UIElement(base(), getLocator(value), nameFromValue(value));
-        else {
-            refresh();
-            if (locator.isXPath())
-                return new UIElement(base(), locator.addText(value), nameFromValue(value), parent);
-            MultiMap<String, UIElement> result = timer().getResultByCondition(
-                () -> elements(1), els -> hasKey(value));
-            if (result != null)
-                return elements(1).get(value);
-            throw exception("Can't get '%s'. No elements with this name found", value);
-        }
+        if (locator.isXPath())
+            return new UIElement(base(), locator.addText(value), nameFromValue(value), parent);
+        return isUseCache() ? getUIElement(value) : getNoCache(value);
+    }
+
+    protected UIElement getNoCache(String value) {
+        logger.info("log: 1");
+        MultiMap<String, UIElement> list = getListElements(1);
+        logger.info("log: 2");
+        if (list.has(value))
+            return list.get(value);
+        throw exception("Can't get '%s'. No elements with this name found", value);
+    }
+    protected UIElement getUIElement(String value) {
+        refresh();
+        if (locator.isXPath())
+            return new UIElement(base(), locator.addText(value), nameFromValue(value), parent);
+        MultiMap<String, UIElement> result = timer().getResultByCondition(
+            () -> elements(1), els -> hasKey(value));
+        if (result != null)
+            return elements(1).get(value);
+        throw exception("Can't get '%s'. No elements with this name found", value);
     }
     private JFunc1<UIElement, String> UIELEMENT_NAME;
     private boolean nameIndex = false;
@@ -199,7 +210,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
             nameIndex = true;
             return this;
         }
-        textType =type;
+        textType = type;
         return setUIElementName(type.func);
     }
     @Override

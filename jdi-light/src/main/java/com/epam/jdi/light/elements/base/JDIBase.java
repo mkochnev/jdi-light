@@ -51,6 +51,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         name = base.name;
         parent = base.parent;
         varName = base.varName;
+        fieldName = base.fieldName;
         typeName = base.typeName;
         failElement = base.failElement;
         driverName = base.driverName;
@@ -65,11 +66,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public MapArray<String, Object> params = new MapArray<>();
 
     public JDILocator locator = new JDILocator(this);
-    @Override
-    public DriverBase setParent(Object parent) {
-        //this.locator.isRoot = false;
-        return super.setParent(parent);
-    }
+
     public CacheValue<WebElement> webElement = new CacheValue<>();
     public CacheValue<List<WebElement>> webElements = new CacheValue<>();
     public MapArray<String, JFunc1<WebElement, Boolean>> searchRules = new MapArray<>();
@@ -157,7 +154,10 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     @Override
     public JDIBase setName(String name) {
         this.name = name;
-        this.varName = name;
+        if (isBlank(this.varName)) {
+            this.varName = toCamelCase(name);
+            this.fieldName = this.varName;
+        }
         this.failElement = name;
         return this;
     }

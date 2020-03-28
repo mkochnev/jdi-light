@@ -20,9 +20,13 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class AllureLogger {
     public static AttachmentStrategy HTML_CODE_LOGGING = ON_FAIL;
 
+    public static void addStep(String message) {
+        String uuid = startStep(message);
+        passStep(uuid);
+    }
     public static String startStep(String message) {
         try {
-            StepResult step = new StepResult().withName(message);
+            StepResult step = new StepResult().setName(message);
             if (getLifecycle().getCurrentTestCase().isPresent()) {
                 String uuid = randomUUID().toString();
                 getLifecycle().startStep(uuid, step);
@@ -35,7 +39,7 @@ public class AllureLogger {
     public static void failStep(String uuid, String screenName, String htmlSnapshot, String requests) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
-        getLifecycle().updateStep(uuid, s -> s.withStatus(FAILED));
+        getLifecycle().updateStep(uuid, s -> s.setStatus(FAILED));
         if (isNotBlank(screenName)) {
             try {
                 attachScreenshot(screenName);
@@ -56,7 +60,7 @@ public class AllureLogger {
     public static void passStep(String uuid) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
-        getLifecycle().updateStep(uuid, s -> s.withStatus(PASSED));
+        getLifecycle().updateStep(uuid, s -> s.setStatus(PASSED));
         getLifecycle().stopStep(uuid);
     }
 

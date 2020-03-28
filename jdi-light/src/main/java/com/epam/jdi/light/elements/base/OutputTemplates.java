@@ -1,6 +1,11 @@
 package com.epam.jdi.light.elements.base;
 
 
+import com.epam.jdi.light.logger.LogLevels;
+import com.epam.jdi.tools.func.JFunc1;
+
+import static com.epam.jdi.light.logger.LogLevels.*;
+
 /**
  * Created by Roman Iovlev on 04.08.2018
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
@@ -19,6 +24,8 @@ public class OutputTemplates {
 
     public static String STEP_TEMPLATE = "{action}";
     public static String DEFAULT_TEMPLATE = "{action} ({element})";
+    public static JFunc1<LogLevels, String> LOG_TEMPLATE =
+        level -> level.equalOrMoreThan(STEP) ? STEP_TEMPLATE : DEFAULT_TEMPLATE;
     public static String FAILED_ACTION_TEMPLATE =
         "Failed to execute '{action}' for element '{failElement}' during '{timeout}' seconds. {exception}";
 }

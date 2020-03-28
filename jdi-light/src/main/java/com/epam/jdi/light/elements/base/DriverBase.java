@@ -32,6 +32,7 @@ public abstract class DriverBase implements JDIElement {
     }
     public String name = "";
     public String varName = "";
+    public String fieldName = "";
     public String typeName = "";
     public String failElement = "";
     public Object parent;
@@ -60,14 +61,20 @@ public abstract class DriverBase implements JDIElement {
     }
     public DriverBase setName(String name) {
         this.name = name;
-        this.varName = name;
+        if (isBlank(this.varName)) {
+            this.varName = toCamelCase(name);
+            this.fieldName = this.varName;
+        }
         this.failElement = name;
         return this;
     }
     public void setName(Field field, String className) {
         this.name = splitCamelCase(field.getName());
         this.failElement = this.name;
-        this.varName = className + "." + field.getName();
+        if (isBlank(this.varName)) {
+            this.varName = className + "." + field.getName();
+            this.fieldName = field.getName();
+        }
         this.typeName = field.getType().getSimpleName();
     }
     public void setTypeName(String typeName) {

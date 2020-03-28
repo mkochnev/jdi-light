@@ -32,10 +32,13 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that each of '{name}' elements meet condition")
-    public DataListAssert<T, D> each(JFunc1<D, Boolean> condition) {
+    @JDIAction("Assert that each of the '{name}' {1}")
+    public DataListAssert<T, D> each(JFunc1<D, Boolean> condition, String nameCondition) {
         jdiAssert(LinqUtils.all(data(), condition::execute), Matchers.is(true));
         return this;
+    }
+    public DataListAssert<T, D> each(JFunc1<D, Boolean> condition) {
+        return each(condition, "meet condition");
     }
 
     /**
@@ -43,10 +46,13 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that any of '{name}' elements meet condition")
-    public DataListAssert<T, D> any(JFunc1<D, Boolean> condition) {
+    @JDIAction("Assert that any of '{name}' {1}")
+    public DataListAssert<T, D> any(JFunc1<D, Boolean> condition, String nameCondition) {
         jdiAssert(LinqUtils.any(data(), condition::execute), Matchers.is(true));
         return this;
+    }
+    public DataListAssert<T, D> any(JFunc1<D, Boolean> condition) {
+        return any(condition, "meet condition");
     }
 
     /**
@@ -54,10 +60,13 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that only one of '{name}' elements meet condition")
-    public DataListAssert<T, D> onlyOne(JFunc1<D, Boolean> condition) {
+    @JDIAction("Assert that only one of the '{name}' {1}}")
+    public DataListAssert<T, D> onlyOne(JFunc1<D, Boolean> condition, String nameCondition) {
         jdiAssert(single(data(), condition::execute), Matchers.is(notNullValue()));
         return this;
+    }
+    public DataListAssert<T, D> onlyOne(JFunc1<D, Boolean> condition) {
+        return onlyOne(condition, "meet condition");
     }
 
     /**
@@ -65,10 +74,13 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that none of '{name}' meet condition")
-    public DataListAssert<T, D> noOne(JFunc1<D, Boolean> condition) {
+    @JDIAction("Assert that none of the '{name}' {1}")
+    public DataListAssert<T, D> noOne(JFunc1<D, Boolean> condition, String nameCondition) {
         jdiAssert(first(data(), condition::execute), Matchers.is(nullValue()));
         return this;
+    }
+    public DataListAssert<T, D> noOne(JFunc1<D, Boolean> condition) {
+        return noOne(condition, "meet condition");
     }
 
     /**
@@ -76,9 +88,9 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param item to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that '{name}' text {0}")
+    @JDIAction("Assert that '{name}' has {0}")
     public DataListAssert<T, D> value(D item) {
-        return and(hasItem(item));
+        return assertData(hasItem(item));
     }
 
     /**
@@ -166,10 +178,8 @@ public class DataListAssert<T extends ICoreElement, D>
      */
     @JDIAction("Assert that '{name}' size {0}")
     public DataListAssert<T, D> size(Matcher<Integer> condition) {
-        jdiAssert(element.size(), condition);
-        return this;
+        return sizeAssert(condition);
     }
-
     /**
      * Check that the list size is given size
      * @param size to compare
@@ -177,7 +187,11 @@ public class DataListAssert<T extends ICoreElement, D>
      */
     @JDIAction("Assert that '{name}' size {0}")
     public DataListAssert<T, D> size(int size) {
-        return size(equalTo(size));
+        return sizeAssert(equalTo(size));
+    }
+    private DataListAssert<T, D> sizeAssert(Matcher<Integer> condition) {
+        jdiAssert(element.size(), condition);
+        return this;
     }
 
     /**
@@ -187,6 +201,9 @@ public class DataListAssert<T extends ICoreElement, D>
      */
     @JDIAction("Assert that '{name}' data {0}")
     public DataListAssert<T, D> and(Matcher<? super List<D>> condition) {
+        return assertData(condition);
+    }
+    public DataListAssert<T, D> assertData(Matcher<? super List<D>> condition) {
         MatcherAssert.assertThat(data(), condition);
         return this;
     }

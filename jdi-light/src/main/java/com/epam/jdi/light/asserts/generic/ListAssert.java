@@ -28,22 +28,22 @@ public class ListAssert<A extends ListAssert<?,?,?>, T, E extends IListSelector<
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that each of '{name}' elements meet condition")
+    @JDIAction("Assert that each of the '{name}' elements meet condition")
     public ListAssert<A, T, E> each(JFunc1<T, Boolean> condition) {
         jdiAssert(LinqUtils.all(list(), condition::execute), Matchers.is(true));
         return this;
     }
-    @JDIAction("Assert that any of '{name}' elements meet condition")
+    @JDIAction("Assert that any of the '{name}' elements meet condition")
     public ListAssert<A, T, E> any(JFunc1<T, Boolean> condition) {
         jdiAssert(LinqUtils.any(list(), condition::execute), Matchers.is(true));
         return this;
     }
-    @JDIAction("Assert that only one of '{name}' elements meet condition")
+    @JDIAction("Assert that only one of the '{name}' elements meet condition")
     public ListAssert<A, T, E> onlyOne(JFunc1<T, Boolean> condition) {
         jdiAssert(single(list(), condition::execute), Matchers.is(notNullValue()));
         return this;
     }
-    @JDIAction("Assert that none of '{name}' meet condition")
+    @JDIAction("Assert that none of the '{name}' meet condition")
     public ListAssert<A, T, E> noOne(JFunc1<T, Boolean> condition) {
         jdiAssert(first(list(), condition::execute), Matchers.is(nullValue()));
         return this;

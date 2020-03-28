@@ -47,7 +47,6 @@ import static com.epam.jdi.tools.map.MapArray.map;
 import static com.epam.jdi.tools.map.MapArray.*;
 import static com.epam.jdi.tools.pairs.Pair.*;
 import static com.epam.jdi.tools.switcher.SwitchActions.*;
-import static java.lang.Character.*;
 import static java.lang.String.format;
 import static java.lang.System.*;
 import static java.lang.Thread.*;
@@ -60,7 +59,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  */
 public class ActionHelper {
     static String getTemplate(LogLevels level) {
-        return level.equalOrMoreThan(STEP) ? STEP_TEMPLATE : DEFAULT_TEMPLATE;
+        return LOG_TEMPLATE.execute(level);
     }
     public static int CUT_STEP_TEXT = 70;
     public static String getActionName(ProceedingJoinPoint jp) {
@@ -68,24 +67,23 @@ public class ActionHelper {
             MethodSignature method = getJpMethod(jp);
             String template = methodNameTemplate(method);
             return isBlank(template)
-                    ? getDefaultName(method.getName(), methodArgs(jp, method))
-                    : fillTemplate(template, jp, method);
+                ? getDefaultName(method.getName(), methodArgs(jp, method))
+                : fillTemplate(template, jp, method);
         } catch (Throwable ex) {
             throw exception(ex, "Surround method issue: Can't get action name: ");
         }
     }
-    public static JFunc1<ProceedingJoinPoint, String> GET_ACTION_NAME = ActionHelper::getActionName;
     public static String fillTemplate(String template, ProceedingJoinPoint jp, MethodSignature method) {
         String filledTemplate = template;
         try {
-            if (filledTemplate.contains("{0")) {
+            if (filledTemplate.matches(".*\\{\\d+}.*")) {
                 Object[] args = getArgs(jp);
                 filledTemplate = msgFormat(filledTemplate, args);
             } else if (filledTemplate.contains("%s")) {
                 filledTemplate = format(filledTemplate, getArgs(jp));
             }
             if (filledTemplate.contains("{")) {
-                MapArray<String, Object> obj = toMap(() -> new MapArray<>("this", getElementName(jp)));
+                MapArray<String, Object> obj = toMap(() -> new MapArray<>("this", getElementInfo(jp)));
                 MapArray<String, Object> args = methodArgs(jp, method);
                 MapArray<String, Object> core = core(jp);
                 MapArray<String, Object> fields = classFields(jp.getThis());
@@ -102,11 +100,11 @@ public class ActionHelper {
             throw exception(ex, "Surround method issue: Can't fill JDIAction template: " + template + " for method: " + method.getName());
         }
     }
-    public static JFunc1<String, String> TRANSFORM_LOG_STRING = s -> s;
+    public static JFunc1<ProceedingJoinPoint, String> GET_LOG_STRING = ActionHelper::getBeforeLogString;
     static String previousAllureStep = "";
     public static void beforeJdiAction(ActionObject jInfo) {
         ProceedingJoinPoint jp = jInfo.jp();
-        String message = TRANSFORM_LOG_STRING.execute(getBeforeLogString(jp));
+        String message = GET_LOG_STRING.execute(jp);
         if (LOGS.writeToAllure && logLevel(jp).equalOrMoreThan(INFO) && !previousAllureStep.equals(message))
             jInfo.stepUId = startStep(message);
         previousAllureStep = message;
@@ -179,7 +177,6 @@ public class ActionHelper {
                 : jp.getSignature().getDeclaringType();
     }
     public static Object afterJdiAction(ActionObject jInfo, Object result) {
-        passStep(jInfo.stepUId);
         ProceedingJoinPoint jp = jInfo.jp();
         if (jInfo.topLevel()) {
             if (logResult(jp)) {
@@ -190,25 +187,27 @@ public class ActionHelper {
                     String text = result.toString();
                     if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
                         text = text.substring(0, CUT_STEP_TEXT) + "...";
-                    logger.toLog(">>> " + text, logLevel);
+                    String messageToLog = ">>> " + text;
+                    logger.toLog(messageToLog, logLevel);
+                    if (LOGS.writeToAllure)
+                        addStep(messageToLog);
                 }
             }
             if (getJpMethod(jp).getName().equals("open"))
                 PAGE.beforeNewPage.execute(getPage(jp.getThis()));
             TIMEOUTS.element.reset();
         }
+        passStep(jInfo.stepUId);
         return result;
     }
     public static JFunc2<ActionObject, Object, Object> AFTER_JDI_ACTION = ActionHelper::afterJdiAction;
     //region Private
     public static String getBeforeLogString(ProceedingJoinPoint jp) {
-        String actionName = GET_ACTION_NAME.execute(jp);
-        String logString = jp.getThis() == null
-            ? actionName
-            : msgFormat(getTemplate(LOGS.logLevel), map(
-                $("action", actionName),
-                $("element", getElementName(jp))));
-        return toUpperCase(logString.charAt(0)) + logString.substring(1);
+        String actionName = getActionName(jp);
+        if (jp.getThis() == null)
+            return capitalize(actionName);
+        String logString = msgFormat(getTemplate(LOGS.logLevel),  $("action", actionName), $("element", getElementInfo(jp)));
+        return capitalize(logString);
     }
     public static void processPage(ActionObject jInfo) {
         getWindows();
@@ -331,13 +330,15 @@ public class ActionHelper {
     static MapArray<String, Object> classFields(Object obj) {
         return obj != null ? getAllFields(obj) : new MapArray<>();
     }
-    static String getElementName(JoinPoint jp) {
+    static String getElementInfo(JoinPoint jp) {
         try {
             Object obj = jp.getThis();
             if (obj == null) return jp.getSignature().getDeclaringType().getSimpleName();
-            return isInterface(getJpClass(jp), INamed.class)
-                ? ((INamed) obj).getName()
-                : obj.toString();
+            if (isInterface(getJpClass(jp), IBaseElement.class))
+                return ((IBaseElement)obj).base().printFullLocator();
+            if (isInterface(getJpClass(jp), INamed.class))
+                return  ((INamed) obj).getName();
+            return obj.toString();
         } catch (Exception ex) {
             throw exception(ex, "Can't get element name");
         }
