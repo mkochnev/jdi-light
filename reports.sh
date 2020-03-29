@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ####################             ABOUT
-
 # grubAllureResults - to send allure results
 # deployAllureResults - to deploy allure reports
 
