@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.epam.jdi.light.driver.WebDriverFactory.*;
 import static com.epam.jdi.light.elements.init.PageFactory.*;
 import static io.github.com.pages.UIElementContactFormPage.*;
 import static io.github.epam.EpamGithubSite.*;
@@ -19,7 +20,9 @@ import static io.github.epam.tests.epam.steps.Preconditions.*;
 import static org.testng.Assert.*;
 
 public class UIElementTests extends TestsInit {
-
+    private WebElement submitSelenium() {
+        return getDriver().findElement(By.xpath("//*[text()='Submit']"));
+    }
     @BeforeMethod
     public void before() {
         initElements(UIElementContactFormPage.class);
@@ -74,15 +77,15 @@ public class UIElementTests extends TestsInit {
 
     @Test
     public void getLocation(){
-        assertEquals(submit.getLocation(), new Point(1042, 477));
+        assertEquals(submit.getLocation(), submitSelenium().getLocation());
     }
     @Test
     public void getSize(){
-        assertEquals(submit.getSize(), new Dimension(82, 34));
+        assertEquals(submit.getSize(), submitSelenium().getSize());
     }
     @Test
     public void getRect(){
-        assertEquals(submit.getRect(), new Rectangle(1042, 477, 34, 82));
+        assertEquals(submit.getRect(), submitSelenium().getRect());
     }
     @Test
     public void jsExecute(){
@@ -276,7 +279,7 @@ public class UIElementTests extends TestsInit {
     }
     @Test
     public void sId(){
-        assertEquals(sId.getLocator().toString(), "By.cssSelector: #sid");
+        assertEquals(sId.getLocator().toString(), "By.cssSelector: #s-id");
     }
     @Test
     public void sText(){
@@ -292,7 +295,7 @@ public class UIElementTests extends TestsInit {
     }
     @Test
     public void sClass(){
-        assertEquals(sClass.getLocator().toString(), "By.cssSelector: .sclass");
+        assertEquals(sClass.getLocator().toString(), "By.cssSelector: .s-class");
     }
     @Test
     public void findBy(){

@@ -94,7 +94,7 @@ public class InitActions {
 
     private static boolean isSetupValue(SiteInfo info) {
         try {
-            if (isInterface(info.type(), ISetup.class))
+            if (isInterface(info.instance.getClass(), ISetup.class))
                 return true;
             Object value = info.field.get(info.parent);
             if (value == null) return false;
