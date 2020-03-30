@@ -1,5 +1,6 @@
 package com.epam.jdi.light.common;
 
+import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.init.SiteInfo;
 import com.epam.jdi.light.elements.interfaces.base.*;
@@ -130,6 +131,16 @@ public final class UIUtils {
             initElements(t);
             return t;
         } catch (Exception ex) { throw exception(ex, "Can't init new element for list"); }
+    }
+
+    public static JDIBase getBase(Object element) {
+        if (isClass(element.getClass(), JDIBase.class))
+            return  (JDIBase) element;
+        else {
+            if (isInterface(element.getClass(), IBaseElement.class))
+                return  ((IBaseElement) element).base();
+        }
+        return null;
     }
 
     private static String getName(Object obj) {

@@ -56,8 +56,6 @@ public class PageFactory {
         for (Field pageField : getSiteFields(site)) {
             try {
                 info.field = pageField;
-                if (info.field.getName().equals("searchPage"))
-                    System.out.println("");
                 setFieldWithInstance(info, null);
             } catch (Throwable ex) {
                 throw exception(ex, initException(pageField, site));
@@ -73,8 +71,6 @@ public class PageFactory {
     }
     private static Object getElementInstance(SiteInfo info) {
         info.instance = getValueField(info.field, info.parent);
-        //if (info.name().equals("colors3"))
-        //    System.out.println("test");
         if (info.instance == null)
             initJdiField(info);
         if (info.instance != null)
@@ -190,7 +186,7 @@ public class PageFactory {
             DataList.class, JList.class, WebList.class);
 
     public static void initElements(SiteInfo info) {
-        List<Field> poFields = recursion(info.instance.getClass(),
+        List<Field> poFields = recursion(info.type(),
             t -> !STOP_INIT_CLASSES.contains(t),
             t -> asList(t.getDeclaredFields()));
         List<Field> fields = filter(poFields, f -> isJDIField(f) || isPageObject(f.getType()));

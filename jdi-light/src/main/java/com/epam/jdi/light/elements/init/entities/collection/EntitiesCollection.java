@@ -1,5 +1,6 @@
 package com.epam.jdi.light.elements.init.entities.collection;
 
+import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.epam.jdi.light.common.Exceptions.*;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.elements.composite.WebPage.*;
 import static com.epam.jdi.light.elements.init.UIFactory.*;
 import static com.epam.jdi.light.settings.WebSettings.*;
@@ -118,7 +120,12 @@ public class EntitiesCollection {
             List<Object> elements = ELEMENTS.get(name);
             if (elements.size() > 1) {
                 Object element = LinqUtils.first(elements, el -> {
-                    WebPage page = ((ICoreElement) el).base().getPage();
+                    if (!isInterface(el.getClass(), IBaseElement.class))
+                        return false;
+                    JDIBase base = getBase(el);
+                    if (base == null)
+                        return false;
+                    WebPage page = base.getPage();
                     return page != null && page.getName().equals(getCurrentPage());
                 });
                 if (element != null) {
@@ -137,7 +144,14 @@ public class EntitiesCollection {
     static Object getElementInSection(String name, String section) {
         if (ELEMENTS.has(name)) {
             List<Object> els = ELEMENTS.get(name);
-            Object result = first(els, el -> isInterface(el.getClass(), IBaseElement.class) && ((IBaseElement) el).base().hasParent(section));
+            Object result = first(els, el -> {
+                if (isInterface(el.getClass(), IBaseElement.class)) {
+                    JDIBase base = getBase(el);
+                    if (base != null)
+                        return base.hasParent(section);
+                }
+                return false;
+            });
             if (result == null)
                 throw exception("Can't find '%s' element at '%s'", name, section);
             return result;

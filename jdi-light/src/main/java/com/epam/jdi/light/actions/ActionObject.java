@@ -1,6 +1,7 @@
 package com.epam.jdi.light.actions;
 
 import com.epam.jdi.light.common.JDIAction;
+import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.Safe;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static com.epam.jdi.light.actions.ActionHelper.*;
 import static com.epam.jdi.light.actions.ActionOverride.*;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.settings.JDISettings.*;
 import static com.epam.jdi.tools.ReflectionUtils.*;
 
@@ -19,8 +21,8 @@ public class ActionObject {
     public ActionObject(ProceedingJoinPoint joinPoint) {
         this.jp = joinPoint;
         try {
-            this.elementTimeout = element() != null
-                ? element().base().getTimeout()
+            this.elementTimeout = base() != null
+                ? base().getTimeout()
                 : TIMEOUTS.element.get();
         } catch (Throwable ex) {
             this.elementTimeout = 10;
@@ -39,6 +41,7 @@ public class ActionObject {
         () -> jp.getThis() != null ? jp.getThis() : new Object());
 
     public IBaseElement element() { return element.get(); }
+    public JDIBase base() { return element() != null ? getBase(element()) : null; }
     private CacheValue<IBaseElement> element = new CacheValue<>(this::getElement);
     private IBaseElement getElement() {
         try {
@@ -66,12 +69,12 @@ public class ActionObject {
     }
 
     private void resetElementTimeout() {
-        if (element() != null)
-            element().base().waitSec(elementTimeout);
+        if (base() != null)
+            base().waitSec(elementTimeout);
     }
     public void setElementTimeout() {
-        if (element() != null)
-            element().base().waitSec(timeout());
+        if (base() != null)
+            base().waitSec(timeout());
     }
 
     public JFunc1<Object, Object> overrideAction() { return overrideAction.get(); }

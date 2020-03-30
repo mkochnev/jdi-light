@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.*;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.common.VisualCheckAction.*;
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.*;
@@ -74,15 +75,15 @@ public class InitActions {
     );
 
     public static MapArray<String, SetupRule> SETUP_RULES = map(
-        $("Element", sRule(info -> isInterface(info.instance.getClass(), IBaseElement.class),
+        $("Element", sRule(info -> isInterface(info.type(), IBaseElement.class),
             InitActions::elementSetup)),
         $("ISetup", sRule(InitActions::isSetupValue, info -> ((ISetup)info.instance).setup(info.field))),
-        $("Page", sRule(info -> isClass(info.instance.getClass(), WebPage.class), InitActions::webPageSetup)),
+        $("Page", sRule(info -> isClass(info.type(), WebPage.class), InitActions::webPageSetup)),
         $("PageObject", sRule(info -> isClassOr(info.type(), WebPage.class, PageObject.class) ||
-                isPageObject(info.instance.getClass()),
+                isPageObject(info.type()),
             PageFactory::initElements)),
         $("VisualCheck", sRule(
-            info -> VISUAL_ACTION_STRATEGY == IS_DISPLAYED && isInterface(info.instance.getClass(), ICoreElement.class),
+            info -> VISUAL_ACTION_STRATEGY == IS_DISPLAYED && isInterface(info.type(), ICoreElement.class),
             i-> ((ICoreElement)i.instance).core().params.update("visualCheck",""))),
         $("List", sRule(info -> info.type() == List.class && isInterface(info.type(), HasUIList.class),
             i -> ((HasUIList)i.instance).list().indexFromZero()))
@@ -90,7 +91,7 @@ public class InitActions {
 
     private static boolean isSetupValue(SiteInfo info) {
         try {
-            if (isInterface(info.instance.getClass(), ISetup.class))
+            if (isInterface(info.type(), ISetup.class))
                 return true;
             Object value = info.field.get(info.parent);
             if (value == null) return false;
@@ -107,7 +108,7 @@ public class InitActions {
         return jdi;
     }
     public static MapArray<String, AnnotationRule> JDI_ANNOTATIONS = map(
-        $("Root", aRule(Root.class, (e,a)-> e.base().locator.isRoot = true)),
+        $("Root", aRule(Root.class, (e,a)-> getBase(e).locator.isRoot = true)),
         $("Frame", aRule(Frame.class, (e,a)-> e.base().setFrames(getFrames(a)))),
         $("FindBySelenium", aRule(org.openqa.selenium.support.FindBy.class,
             (e,a)-> e.base().setLocator(findByToBy(a)))),
@@ -169,11 +170,15 @@ public class InitActions {
 
     public static IBaseElement elementSetup(SiteInfo info) {
         IBaseElement jdi = (IBaseElement) info.instance;
-        defaultSetup(info, jdi.base());
-        Object parent = jdi.base().parent;
+        JDIBase base = getBase(info.instance);
+        if (base == null)
+            throw exception("Setup element failed: Instance not a BaseElement");
+        defaultSetup(info, base);
+        Object parent = base.parent;
         if (parent != null && isClass(parent.getClass(), IBaseElement.class)) {
-            JDIBase parentBase = ((IBaseElement)parent).base();
-            jdi.base().searchRules = parentBase.searchRules.copy();
+            JDIBase parentBase = getBase(parent);
+            if (parentBase != null)
+                base.searchRules = parentBase.searchRules.copy();
         }
         if (info.field != null) {
             for (Pair<String, AnnotationRule> aRule : JDI_ANNOTATIONS) {

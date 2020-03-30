@@ -17,9 +17,11 @@ public class SiteInfo extends DataClass<SiteInfo> {
             return cl;
         if (field != null)
             return field.getType();
-        return instance != null
-            ? cl = instance.getClass()
-            : null;
+        if (instance != null) {
+            cl = instance.getClass();
+            return cl;
+        }
+        return null;
     }
     public String name() {
         return name != null

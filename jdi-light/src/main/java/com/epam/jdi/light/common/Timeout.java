@@ -3,7 +3,6 @@ package com.epam.jdi.light.common;
 import com.epam.jdi.tools.Safe;
 
 import static com.epam.jdi.light.common.Exceptions.*;
-import static com.epam.jdi.light.settings.WebSettings.*;
 
 /**
  * Created by Roman Iovlev on 26.09.2019
@@ -37,13 +36,11 @@ public class Timeout {
     public void setUp(int seconds) {
         DEFAULT.set(seconds);
         current.set(seconds);
-        logger.debug("Setup timeout " + seconds + " seconds");
     }
     public void set(int seconds) {
         if (freeze.get() > 0) return;
         if (freeze.get() < 0) throw exception("Timeout freeze broken");
         current.set(seconds);
-        logger.debug("Set timeout " + seconds + " seconds");
     }
     public void reset() {
         if (freeze.get() > 0) return;

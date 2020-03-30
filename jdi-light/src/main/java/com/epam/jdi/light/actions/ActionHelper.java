@@ -26,6 +26,7 @@ import java.util.*;
 import static com.epam.jdi.light.actions.ActionObject.*;
 import static com.epam.jdi.light.common.Exceptions.*;
 import static com.epam.jdi.light.common.PageChecks.NONE;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.common.VisualCheckAction.*;
 import static com.epam.jdi.light.common.VisualCheckPage.*;
 import static com.epam.jdi.light.driver.ScreenshotMaker.*;
@@ -83,7 +84,7 @@ public class ActionHelper {
             } else if (filledTemplate.contains("%s")) {
                 filledTemplate = format(filledTemplate, getArgs(jp));
             }
-            if (filledTemplate.contains("{")) {
+            if (filledTemplate.matches(".*\\{[^{}]+}.*")) {
                 MapArray<String, Object> obj = toMap(() -> new MapArray<>("this", getElementInfo(jp)));
                 MapArray<String, Object> args = methodArgs(jp, method);
                 MapArray<String, Object> core = core(jp);
@@ -131,7 +132,7 @@ public class ActionHelper {
         }
         else {
             if (isInterface(obj.getClass(), JAssert.class)) {
-                JDIBase element = ((IBaseElement) obj).base();
+                JDIBase element = getBase(obj);
                 try {
                     element.visualCheck(message);
                 } catch (Exception ex) {
@@ -253,15 +254,16 @@ public class ActionHelper {
         if (LOGS.htmlCodeStrategy.contains(FAIL))
             htmlSnapshot = takeHtmlCodeOnFailure();
         if (LOGS.requestsStrategy.contains(FAIL)) {
-            WebDriver driver = jInfo.element() != null
-                ? jInfo.element().base().driver()
-                : getDriver();
+            WebDriver driver = getWebDriver(jInfo);
             List<LogEntry> requests = driver.manage().logs().get("performance").getAll();
             List<String> errorEntries = LinqUtils.map(filter(requests, LOGS.filterHttpRequests),
                 logEntry -> beautifyJson(logEntry.getMessage()));
             errors = print(errorEntries);
         }
         failStep(jInfo.stepUId, screenName, htmlSnapshot, errors);
+    }
+    private static WebDriver getWebDriver(ActionObject jInfo) {
+        return jInfo.base() != null ? jInfo.base().driver() : getDriver();
     }
     static WebPage getPage(Object element) {
         if (!isClass(element.getClass(), DriverBase.class))
@@ -342,8 +344,11 @@ public class ActionHelper {
         try {
             Object obj = jp.getThis();
             if (obj == null) return jp.getSignature().getDeclaringType().getSimpleName();
-            if (isInterface(getJpClass(jp), IBaseElement.class))
-                return ((IBaseElement)obj).base().printFullLocator();
+            if (isInterface(getJpClass(jp), IBaseElement.class)) {
+                JDIBase base = getBase(obj);
+                if (base != null)
+                    return base.printFullLocator();
+            }
             if (isInterface(getJpClass(jp), INamed.class))
                 return  ((INamed) obj).getName();
             return obj.toString();

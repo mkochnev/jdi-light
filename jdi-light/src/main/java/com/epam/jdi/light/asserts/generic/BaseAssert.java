@@ -21,7 +21,7 @@ public class BaseAssert<E extends IBaseElement> implements IBaseElement {
     public static JFunc1<JDIElement, String> PRINT_ASSERT = JDIElement::toString;
 
     public JDIBase base() {
-        return element.base();
+        return element != null ? element.base() : null;
     }
 
     public BaseAssert() { }

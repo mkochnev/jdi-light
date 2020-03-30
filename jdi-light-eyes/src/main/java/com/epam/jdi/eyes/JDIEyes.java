@@ -9,6 +9,7 @@ package com.epam.jdi.eyes;
 import com.applitools.eyes.BatchInfo;
 import com.applitools.eyes.TestResults;
 import com.applitools.eyes.selenium.Eyes;
+import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
 import com.epam.jdi.light.elements.interfaces.base.INamed;
@@ -24,6 +25,7 @@ import java.util.List;
 import static com.applitools.eyes.selenium.fluent.Target.*;
 import static com.epam.jdi.light.actions.ActionHelper.*;
 import static com.epam.jdi.light.actions.ActionOverride.*;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.common.VisualCheckAction.*;
 import static com.epam.jdi.light.common.VisualCheckPage.*;
 import static com.epam.jdi.light.elements.init.PageFactory.*;
@@ -52,10 +54,11 @@ public class JDIEyes {
                 }
                 if (!isClass(getJpClass(jp), IBaseElement.class))
                     return;
-                IBaseElement ui = (IBaseElement) jp.getThis();
+                JDIBase ui = getBase(jp.getThis());
+                if (ui == null) return;
                 String name = getBeforeLogString(jp);
-                show(ui.base().getWebElement());
-                visualCheckElement(ui.base().getWebElement(), name);
+                show(ui.getWebElement());
+                visualCheckElement(ui.getWebElement(), name);
             } catch (Throwable ex) {
                 visualCheckPage(WebPage.getCurrentPage());
             }

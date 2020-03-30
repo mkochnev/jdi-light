@@ -70,7 +70,7 @@ public class UIAssert<A extends UIAssert, E extends ICoreElement> extends BaseAs
      * Check that the element doesn't appear for the specified time
      * @param timeoutSec
      */
-    @JDIAction(value = "Assert that '{name}' does not appear during {0} seconds", timeout = 0)
+    @JDIAction(value = "Assert that '{name}' does not appear during {0} second(s)", timeout = 0)
     public A notAppear(int timeoutSec) {
         boolean result = new Timer(timeoutSec * 1000L)
                 .wait(() -> element.isDisplayed());

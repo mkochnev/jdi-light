@@ -125,7 +125,7 @@ public class UISelectAssert<A extends UISelectAssert<?,?>, E extends ISelector> 
         return notAppear(TIMEOUTS.element.get());
     }
 
-    @JDIAction(value = "Assert that '{name}' does not appear during {0} seconds", timeout = 0)
+    @JDIAction(value = "Assert that '{name}' does not appear during {0} second(s)", timeout = 0)
     public A notAppear(int timeoutSec) {
         boolean result = new Timer(timeoutSec * 1000)
                 .wait(() -> element.isDisplayed());

@@ -15,6 +15,7 @@ import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.*;
 import static com.epam.jdi.light.common.SearchStrategies.*;
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
 import static com.epam.jdi.light.elements.base.OutputTemplates.*;
 import static com.epam.jdi.light.elements.init.UIFactory.*;
@@ -166,12 +167,12 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public void visualCheck(String message) { }
 
     public static final String FAILED_TO_FIND_ELEMENT_MESSAGE
-            = "Can't find Element '%s' during %s seconds";
+            = "Can't find Element '%s' during %s second(s)";
     public static final String FIND_TO_MUCH_ELEMENTS_MESSAGE
-            = "Found %s elements instead of one for Element '%s' during %s seconds";
+            = "Found %s elements instead of one for Element '%s' during %s second(s)";
     public static final String ELEMENTS_FILTERED_MESSAGE
             = "Found %s elements but none pass results filtering. Please change locator or filtering rules (WebSettings.SEARCH_RULE = )" +
-            LINE_BREAK + "Element '%s' search during %s seconds";
+            LINE_BREAK + "Element '%s' search during %s second(s)";
 
     public WebElement getWebElement() {
         return get(new Object[]{});
@@ -194,9 +195,12 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         return this;
     }
     private WebElement purify(WebElement element) {
-        return isInterface(element.getClass(), IBaseElement.class)
-            ? ((IBaseElement)element).base().get()
-            : element;
+        if (isInterface(element.getClass(), IBaseElement.class)) {
+            JDIBase base = getBase(element);
+            if (base != null)
+                return base.get();
+        }
+        return element;
     }
     private UIElement getUIElementByLocator(WebElement element) {
         return new UIElement(element).find(getLocator()).setup(b -> {
@@ -369,13 +373,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public void dropToGlobalTimeout() {
         waitSec(TIMEOUTS.element.get());
     }
-    private JDIBase getBase(Object element) {
-        if (isClass(element.getClass(), JDIBase.class))
-            return  (JDIBase) element;
-        else { if (isInterface(element.getClass(), IBaseElement.class))
-            return  ((IBaseElement) element).base(); }
-        return null;
-    }
+
     private SearchContext getSearchContext(Object parent) {
         JDIBase bElement = getBase(parent);
         if (bElement == null)
