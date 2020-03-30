@@ -107,7 +107,6 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return format("%s[%s]", getName(), value);
     }
 
-    @JDIAction(level = DEBUG)
     public MultiMap<String, UIElement> elements(int minAmount) {
         if (elements.isUseCache() && elements.hasValue() && isActual() && elements.get().size() >= minAmount)
             return elements.get();
@@ -417,7 +416,6 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     /**
      * Refresh the element
      */
-    @JDIAction(level = DEBUG)
     public void refresh() {
         elements.clear();
     }
@@ -425,7 +423,6 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     /**
      * Clear the element
      */
-    @JDIAction(level = DEBUG)
     public void clear() {
         refresh();
     }

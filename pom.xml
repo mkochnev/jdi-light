@@ -66,6 +66,5 @@
         <module>test-examples/jdi-bdd-no-po-tests</module>
         <module>test-templates/jdi-light-junit-template</module>
         <module>test-templates/jdi-light-testng-template</module>
-        <module>test-templates/zylab-tests</module>
     </modules>
 </project>

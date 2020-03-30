@@ -23,6 +23,7 @@ import org.openqa.selenium.logging.LogEntry;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.epam.jdi.light.actions.ActionObject.*;
 import static com.epam.jdi.light.common.Exceptions.*;
 import static com.epam.jdi.light.common.PageChecks.NONE;
 import static com.epam.jdi.light.common.VisualCheckAction.*;
@@ -101,21 +102,22 @@ public class ActionHelper {
         }
     }
     public static JFunc1<ProceedingJoinPoint, String> GET_LOG_STRING = ActionHelper::getBeforeLogString;
-    static String previousAllureStep = "";
     public static void beforeJdiAction(ActionObject jInfo) {
+        if (retry.get())
+            return;
         ProceedingJoinPoint jp = jInfo.jp();
         String message = GET_LOG_STRING.execute(jp);
-        if (LOGS.writeToAllure && logLevel(jp).equalOrMoreThan(INFO) && !previousAllureStep.equals(message))
+        if (LOGS.writeToAllure && logLevel(jp).equalOrMoreThan(INFO))
             jInfo.stepUId = startStep(message);
-        previousAllureStep = message;
         if (jInfo.topLevel()) {
             if (LOGS.writeToLog)
                 logger.toLog(message, logLevel(jp));
-            if (PAGE.checkPageOpen != NONE || VISUAL_PAGE_STRATEGY == CHECK_NEW_PAGE)
+            if (logLevel(jp).equalOrMoreThan(INFO) && (PAGE.checkPageOpen != NONE || VISUAL_PAGE_STRATEGY == CHECK_NEW_PAGE))
                 processPage(jInfo);
-            if (VISUAL_ACTION_STRATEGY == ON_VISUAL_ACTION)
+            if (logLevel(jp).equalOrMoreThan(INFO) && VISUAL_ACTION_STRATEGY == ON_VISUAL_ACTION)
                 visualValidation(jp, message);
         }
+        jInfo.passBefore = true;
     }
     private static void visualValidation(ProceedingJoinPoint jp, String message) {
         Object obj = jp.getThis();
@@ -173,31 +175,37 @@ public class ActionHelper {
     }
     protected static Class<?> getJpClass(JoinPoint jp) {
         return jp.getThis() != null
-                ? jp.getThis().getClass()
-                : jp.getSignature().getDeclaringType();
+            ? jp.getThis().getClass()
+            : jp.getSignature().getDeclaringType();
     }
     public static Object afterJdiAction(ActionObject jInfo, Object result) {
+        if (!jInfo.passBefore)
+            return result;
+        retry.set(false);
         ProceedingJoinPoint jp = jInfo.jp();
-        if (jInfo.topLevel()) {
-            if (logResult(jp)) {
-                LogLevels logLevel = logLevel(jp);
-                if (result == null || isInterface(getJpClass(jp), JAssert.class))
+        if (logResult(jp)) {
+            LogLevels logLevel = logLevel(jp);
+            if (result == null || isInterface(getJpClass(jp), JAssert.class)) {
+                if (jInfo.topLevel())
                     logger.debug("Done");
-                else {
-                    String text = result.toString();
-                    if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
-                        text = text.substring(0, CUT_STEP_TEXT) + "...";
-                    String messageToLog = ">>> " + text;
+            } else {
+                String text = result.toString();
+                if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
+                    text = text.substring(0, CUT_STEP_TEXT) + "...";
+                String messageToLog = ">>> " + text;
+                if (jInfo.topLevel())
                     logger.toLog(messageToLog, logLevel);
-                    if (LOGS.writeToAllure)
-                        addStep(messageToLog);
-                }
+                if (LOGS.writeToAllure)
+                    addStep(messageToLog);
             }
+        }
+        if (jInfo.topLevel()) {
             if (getJpMethod(jp).getName().equals("open"))
                 PAGE.beforeNewPage.execute(getPage(jp.getThis()));
             TIMEOUTS.element.reset();
         }
-        passStep(jInfo.stepUId);
+        if (isNotBlank(jInfo.stepUId))
+            passStep(jInfo.stepUId);
         return result;
     }
     public static JFunc2<ActionObject, Object, Object> AFTER_JDI_ACTION = ActionHelper::afterJdiAction;
@@ -389,9 +397,9 @@ public class ActionHelper {
     public static boolean notThisAround(String name) {
         return !arounds().get(0).getClassName().equals(name);
     }
-    public static int aroundCount(String name) {
+    public static int aroundCount() {
         return where(currentThread().getStackTrace(),
-                s -> s.getMethodName().equals("jdiAround") && s.getClassName().equals(name))
+                s -> s.getMethodName().equals("jdiAround"))
                 .size();
     }
     private static String getMethodName(ProceedingJoinPoint jp) {
@@ -407,20 +415,21 @@ public class ActionHelper {
     public static Object defaultAction(ActionObject jInfo) throws Throwable {
         logger.debug("defaultAction: " + getMethodName(jInfo.jp()));
         jInfo.setElementTimeout();
+        if (getJdiAction(jInfo.jp()).basic())
+            retry.set(true);
         return jInfo.overrideAction() != null
                 ? jInfo.overrideAction().execute(jInfo.object()) : jInfo.jp().proceed();
     }
     public static Object stableAction(ActionObject jInfo) {
         logger.debug("stableAction: " + getMethodName(jInfo.jp()));
         String exceptionMsg = "";
-        jInfo.setElementTimeout();
         long start = currentTimeMillis();
         Throwable exception = null;
+        retry.set(false);
         do {
             try {
                 logger.debug("do-while: " + getMethodName(jInfo.jp()));
-                Object result = jInfo.overrideAction() != null
-                    ? jInfo.overrideAction().execute(jInfo.object()) : jInfo.jp().proceed();
+                Object result = defaultAction(jInfo);
                 if (!condition(jInfo.jp())) continue;
                 return result;
             } catch (Throwable ex) {
@@ -429,6 +438,7 @@ public class ActionHelper {
                     exceptionMsg = safeException(ex);
                     Thread.sleep(200);
                 } catch (Exception ignore) { }
+                retry.set(true);
             }
         } while (currentTimeMillis() - start < jInfo.timeout() * 1000);
         throw exception(exception, getFailedMessage(jInfo, exceptionMsg));

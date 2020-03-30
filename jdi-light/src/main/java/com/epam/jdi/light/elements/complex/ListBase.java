@@ -55,7 +55,6 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
         } catch (Exception ex) { return false; }
     }
 
-    @JDIAction(level = DEBUG)
     public MultiMap<String, T> elements(int minAmount) {
         if (actualMapValue())
             return map.get();
@@ -65,14 +64,12 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     /**
      * @param value
      */
-    @JDIAction(level = DEBUG)
     public T get(String value) {
         return toT(list().get(value));
     }
     /**
      * @param index
      */
-    @JDIAction(level = DEBUG)
     public T get(int index) {
         return toT(list().get(index));
     }
@@ -164,7 +161,6 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     /**
      * Refresh the element
      */
-    @JDIAction(level = DEBUG)
     public void refresh() {
         clear();
     }
@@ -172,7 +168,6 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     /**
      * Clear the element
      */
-    @JDIAction(level = DEBUG)
     public void clear() {
         list().clear();
         map.clear();

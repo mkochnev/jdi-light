@@ -167,7 +167,7 @@ public class UIElement extends JDIBase
         return enabled();
     }
 
-    @JDIAction("Get '{name}' text") @Override
+    @JDIAction(value = "Get '{name}' text", basic = true) @Override
     public String getText() {
         return text(textType);
     }
@@ -274,7 +274,7 @@ public class UIElement extends JDIBase
      * Input specified value as keys
      * @param value
      */
-    @JDIAction("Input '{0}' in '{name}'")
+    @JDIAction(value = "Input '{0}' in '{name}'", basic = true)
     public void input(String value) {
         setTextType.action.execute(this, value);
     }
@@ -651,7 +651,7 @@ public class UIElement extends JDIBase
     public String labelText() {
         return label().getText();
     }
-    @JDIAction("Get '{name}' text") @Override
+    @JDIAction(value = "Get '{name}' text", basic = true) @Override
     public String text(TextTypes type) {
         String result = timer().getResult(() -> noWait(() -> type.func.execute(this)));
         return result;

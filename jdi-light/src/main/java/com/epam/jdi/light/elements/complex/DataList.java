@@ -7,6 +7,7 @@ import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.PrintUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -15,6 +16,7 @@ import java.util.List;
 import static com.epam.jdi.light.asserts.core.SoftAssert.*;
 import static com.epam.jdi.light.common.Exceptions.*;
 import static com.epam.jdi.light.common.UIUtils.*;
+import static com.epam.jdi.light.elements.init.UIFactory.*;
 import static com.epam.jdi.tools.EnumUtils.*;
 import static com.epam.jdi.tools.ReflectionUtils.*;
 
@@ -42,7 +44,9 @@ public class DataList<T extends ICoreElement, D> extends ListBase<T, DataListAss
     public List<D> asData() {
         try {
             if (dataType == null) return null;
-            return LinqUtils.map(elements(1).values(), v -> asEntity(v, dataType));
+            List<WebElement> list = list().getList(1);
+            List<T> entities = LinqUtils.map(list, webElement -> toT($(webElement)));
+            return LinqUtils.map(entities, v -> asEntity(v, dataType));
         } catch (Exception ex) {
             throw exception(ex, "Can't get DataList data");
         }
