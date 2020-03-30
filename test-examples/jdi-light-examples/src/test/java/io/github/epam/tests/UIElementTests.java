@@ -4,7 +4,8 @@ import com.epam.jdi.light.asserts.core.IsAssert;
 import com.epam.jdi.light.common.ElementArea;
 import io.github.com.pages.UIElementContactFormPage;
 import io.github.epam.TestsInit;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -275,7 +276,7 @@ public class UIElementTests extends TestsInit {
     }
     @Test
     public void pageName(){
-        assertEquals(submitPage.getPage().getTitle(), metalAndColorsPage.getTitle());
+        assertEquals(elementOnMetalsPage.getPage().title, metalAndColorsPage.title);
     }
     @Test
     public void sId(){

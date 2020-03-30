@@ -60,7 +60,7 @@ public class DataListAssert<T extends ICoreElement, D>
      * @param condition to compare
      * @return DataListAssert
      */
-    @JDIAction("Assert that only one of the '{name}' {1}}")
+    @JDIAction("Assert that only one of the '{name}' {1}")
     public DataListAssert<T, D> onlyOne(JFunc1<D, Boolean> condition, String nameCondition) {
         jdiAssert(single(data(), condition::execute), Matchers.is(notNullValue()));
         return this;

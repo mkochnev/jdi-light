@@ -3,7 +3,6 @@ package com.epam.jdi.light.settings;
 import com.epam.jdi.light.common.*;
 import com.epam.jdi.light.elements.base.JdiSettings;
 import com.epam.jdi.light.elements.base.SeleniumSettings;
-import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.tools.func.JAction;
 import com.epam.jdi.tools.pairs.Pair;
 

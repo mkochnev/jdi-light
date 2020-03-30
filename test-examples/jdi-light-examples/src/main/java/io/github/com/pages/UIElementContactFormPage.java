@@ -11,12 +11,13 @@ import com.epam.jdi.light.elements.pageobjects.annotations.smart.*;
 import static com.epam.jdi.light.common.TextTypes.*;
 
 public class UIElementContactFormPage extends WebPage {
+    public static final String FIRST_ROW = "//*[@class='horizontal-group'][1]";
     //Elements are described in different formats to cover all variants of initialization
     @ByText("Submit") public static UIElement submit;
     @Css("li[class='summ-res']") public static UIElement sum;
     @Css("textarea[class='uui-form-element']") public static UIElement description;
     @Css("[id='p1']") public static UIElement forCalculateOne;
-    @XPath(UIElementConstants.firstRowForCalculate + "//*[@id='p2']") public static UIElement forCalculateThree;
+    @XPath(FIRST_ROW + "//*[@id='p2']") public static UIElement forCalculateThree;
     @UI("['SubmitNotDisplayed']") public static UIElement submitNotDisplayed;
     @WithText("Result") public static UIElement result;
     public static UIElement smartLocator;
@@ -29,7 +30,7 @@ public class UIElementContactFormPage extends WebPage {
     @Css("textarea[class='uui-form-element']") @WaitTimeout(100) public static UIElement descriptionWaitTimeout;
     @Css("li[class='summ-res']") @GetAny @GetVisible @GetVisibleEnabled public static UIElement sumGet;
     @ByText("Submit") @GetShowInView public static UIElement submitGetShowInView;
-    @ByText("Submit") @PageName("Metal and Colors") public static UIElement submitPage; //as contact page is default set different page
+    @ByText("Submit") @PageName("Metal And Colors Page") public static UIElement elementOnMetalsPage; //as contact page is default set different page
     @Name("SId") @SId public static UIElement sId;
     @Name("SText") @SText public static UIElement sText;
     @Name("Smart") @Smart public static UIElement smart;
@@ -39,8 +40,4 @@ public class UIElementContactFormPage extends WebPage {
     @FindBy(css="findBy") public static UIElement findBy;
     @FindBy public static UIElement findByNull;
     @VisualCheck public static UIElement visualCheck;
-}
-
-final class UIElementConstants {
-    public static final String  firstRowForCalculate = "//*[@class='horizontal-group'][1]";
 }

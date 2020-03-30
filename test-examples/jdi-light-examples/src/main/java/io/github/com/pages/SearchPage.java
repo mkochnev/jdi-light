@@ -3,7 +3,6 @@ package io.github.com.pages;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.DataList;
 import com.epam.jdi.light.elements.complex.JList;
-import com.epam.jdi.light.elements.pageobjects.annotations.StartIndex;
 import com.epam.jdi.light.elements.pageobjects.annotations.WaitTimeout;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.Css;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.XPath;
@@ -16,8 +15,7 @@ public class SearchPage extends BaseSelPage {
 	@Css(".box") public DataList<SearchResult, Result> search;
 	@Css(".box") public DataList<SearchResult, ?> search2;
 	@Css(".box") public static List<SearchResult> search3;
-	@Css(".box") @WaitTimeout(2)
-	public static DataList<SearchResult, ?> searchS;
+	@Css(".box") public static DataList<SearchResult, ?> searchS;
 	@XPath("//*[@class='box']/h3[text()=\"%s\"]")
 	public DataList<SearchResult, ?> searchT2;
 
