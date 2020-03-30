@@ -140,8 +140,10 @@ public class PageFactory {
                     info.instance = create(info.type(), getDriver(info.driverName));
                     throw exception(msg);
             } catch (Throwable ex) {
+                if (info == null || info.type() == null || info.instance == null)
+                    throw exception(ex, "Can't create field ");
                 throw exception(ex, "Can't create field '%s' instance of type '%s'. Try new %s() to get more details",
-                        info.name(), info.type(), info.type());
+                        info.name(), info.type().getSimpleName(), info.instance.getClass().getSimpleName());
             }
         }
     }

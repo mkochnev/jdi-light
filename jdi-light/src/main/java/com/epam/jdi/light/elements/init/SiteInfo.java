@@ -24,10 +24,9 @@ public class SiteInfo extends DataClass<SiteInfo> {
         return null;
     }
     public String name() {
-        return name != null
-            ? name : ( field != null
-                ? field.getName()
-                : "Undefined element");
+        if (name != null)
+            return name;
+        return field != null ? field.getName() : "Undefined element";
     }
     public Class<?> parentClass;
     public Object parent;

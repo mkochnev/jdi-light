@@ -4,11 +4,15 @@ import com.epam.jdi.light.common.*;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.tools.func.*;
+import com.epam.jdi.tools.map.MapArray;
 import com.epam.jdi.tools.pairs.Pair;
 import org.openqa.selenium.WebElement;
 
 import static com.epam.jdi.light.common.NameToLocator.*;
 import static com.epam.jdi.light.common.UseSmartSearch.*;
+import static com.epam.jdi.light.settings.Strategies.*;
+import static com.epam.jdi.tools.map.MapArray.*;
+import static com.epam.jdi.tools.pairs.Pair.*;
 
 public class ElementSettings {
     public JAction1<UIElement> beforeSearch;
@@ -19,6 +23,11 @@ public class ElementSettings {
     public Pair<String, JFunc1<WebElement, Boolean>> searchRule;
     public String smartTemplate = "#%s";
     public Pair<String, JFunc1<String, String>> smartName
-        = Pair.$("kebab-case", SMART_MAP_NAME_TO_LOCATOR.get("kebab-case"));
+        = $("kebab-case", SMART_MAP_NAME_TO_LOCATOR.get("kebab-case"));
     public UseSmartSearch useSmartSearch = UI_AND_ELEMENTS;
+    public MapArray<String, Strategies> strategies = map(
+            $("jdi", JDI),
+            $("jdismart", JDI_SMART),
+            $("selenium", SELENIUM)
+    );
 }

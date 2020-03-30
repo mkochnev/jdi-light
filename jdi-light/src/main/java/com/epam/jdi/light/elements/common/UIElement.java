@@ -664,9 +664,7 @@ public class UIElement extends JDIBase
         if (isNotBlank(text))
             return text;
         text = ui.text(VALUE);
-        return isNotBlank(text)
-            ? text
-            : isNotBlank(text) ? text : "";
+        return isNotBlank(text) ? text : "";
     };
     public static JFunc1<UIElement, String> SMART_LIST_TEXT = ui -> {
         String text = ui.text(TEXT);

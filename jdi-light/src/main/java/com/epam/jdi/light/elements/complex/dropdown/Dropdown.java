@@ -6,6 +6,8 @@ import com.epam.jdi.light.elements.complex.WebList;
 
 import java.util.List;
 
+import static com.epam.jdi.light.common.UIUtils.*;
+
 /**
  * Created by Roman Iovlev on 02.03.2018
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
@@ -16,7 +18,7 @@ public class Dropdown extends DropdownExpand {
     }
     @Override
     public UIElement iCore() {
-        return setupDone ? value() : ds().core();
+        return setupDone ? value() : getCore(ds());
     }
 
     @Override

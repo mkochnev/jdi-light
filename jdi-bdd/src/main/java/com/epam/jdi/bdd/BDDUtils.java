@@ -9,6 +9,7 @@ import com.epam.jdi.light.elements.interfaces.common.IsInput;
 import com.epam.jdi.tools.map.MapArray;
 import cucumber.api.DataTable;
 
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.*;
 
 /**
@@ -25,11 +26,11 @@ public final class BDDUtils {
     }
 
     public static UIElement core(String name) {
-        return getUI(name).core();
+        return getCore(getUI(name));
     }
 
     public static IsAssert isAssert(String name) {
-        return getUI(name).core().is();
+        return core(name).is();
     }
 
     public static SelectedAssert selectedAssert(String name) {

@@ -332,7 +332,7 @@ public class ActionHelper {
     static MapArray<String, Object> core(JoinPoint jp) {
         Class cl = jp.getSignature().getDeclaringType();
         if (jp.getThis() != null && isInterface(cl, ICoreElement.class)) {
-            UIElement el = ((ICoreElement) jp.getThis()).core();
+            UIElement el = getCore(jp.getThis());
             return getAllFields(el);
         }
         return new MapArray<>();
@@ -452,9 +452,9 @@ public class ActionHelper {
         MethodSignature method = getJpMethod(jInfo.jp());
         try {
             String result = msgFormat(FAILED_ACTION_TEMPLATE, map(
-                    $("exception", exception),
-                    $("timeout", jInfo.timeout()),
-                    $("action", method.getMethod().getName())
+                $("exception", exception),
+                $("timeout", jInfo.timeout()),
+                $("action", method.getMethod().getName())
             ));
             return fillTemplate(result, jInfo.jp(), method);
         } catch (Exception ex) {

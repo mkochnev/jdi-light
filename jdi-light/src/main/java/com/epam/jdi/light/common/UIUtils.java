@@ -142,6 +142,15 @@ public final class UIUtils {
         }
         return null;
     }
+    public static UIElement getCore(Object element) {
+        if (isClass(element.getClass(), UIElement.class))
+            return  (UIElement) element;
+        else {
+            if (isInterface(element.getClass(), ICoreElement.class))
+                return ((ICoreElement) element).core();
+        }
+        return null;
+    }
 
     private static String getName(Object obj) {
         return isInterface(obj.getClass(), INamed.class)

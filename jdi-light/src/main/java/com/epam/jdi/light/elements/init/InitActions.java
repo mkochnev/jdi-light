@@ -75,17 +75,20 @@ public class InitActions {
     );
 
     public static MapArray<String, SetupRule> SETUP_RULES = map(
-        $("Element", sRule(info -> isInterface(info.type(), IBaseElement.class),
+        $("Element", sRule(info -> isInterface(info.instance.getClass(), IBaseElement.class),
             InitActions::elementSetup)),
         $("ISetup", sRule(InitActions::isSetupValue, info -> ((ISetup)info.instance).setup(info.field))),
-        $("Page", sRule(info -> isClass(info.type(), WebPage.class), InitActions::webPageSetup)),
-        $("PageObject", sRule(info -> isClassOr(info.type(), WebPage.class, PageObject.class) ||
-                isPageObject(info.type()),
+        $("Page", sRule(info -> isClass(info.instance.getClass(), WebPage.class), InitActions::webPageSetup)),
+        $("PageObject", sRule(info -> isClassOr(info.instance.getClass(), WebPage.class, PageObject.class) || isPageObject(info.type()),
             PageFactory::initElements)),
         $("VisualCheck", sRule(
-            info -> VISUAL_ACTION_STRATEGY == IS_DISPLAYED && isInterface(info.type(), ICoreElement.class),
-            i-> ((ICoreElement)i.instance).core().params.update("visualCheck",""))),
-        $("List", sRule(info -> info.type() == List.class && isInterface(info.type(), HasUIList.class),
+            info -> VISUAL_ACTION_STRATEGY == IS_DISPLAYED && isInterface(info.instance.getClass(), ICoreElement.class),
+            i-> {
+                UIElement core = getCore(i.instance);
+                if (core != null) {
+                    core.params.update("visualCheck","");
+                }})),
+        $("List", sRule(info -> info.type() == List.class && isInterface(info.instance.getClass(), HasUIList.class),
             i -> ((HasUIList)i.instance).list().indexFromZero()))
     );
 

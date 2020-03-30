@@ -393,7 +393,11 @@ public class Form<T> extends Section {
                 if (fields.isEmpty())
                     return false;
                 Object po = fields.get(0).get(pageObject);
-                return isInterface(po.getClass(), ICoreElement.class) && ((ICoreElement) po).core().isDisplayed();
+                if (isInterface(po.getClass(), ICoreElement.class)) {
+                    UIElement core = getCore(po);
+                    if (core != null)
+                        core.isDisplayed();
+                }
             }
         } catch (Exception ignore) { }
         return false;

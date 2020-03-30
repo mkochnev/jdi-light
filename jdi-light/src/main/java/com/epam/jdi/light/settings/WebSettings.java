@@ -310,11 +310,7 @@ public class WebSettings {
         return strategies;
     }
     private static Strategies getStrategy(String prop) {
-        String strategy = prop.trim().toLowerCase();
-        switch (strategy) {
-            case "jdi": return JDI;
-            case "selenium": return SELENIUM;
-            default: return JDI;
-        }
+        String strategy = prop.trim().toLowerCase().replaceAll("[^a-zA-Z]", "");
+        return ELEMENT.strategies.has(strategy) ? ELEMENT.strategies.get(strategy) : JDI;
     }
 }
