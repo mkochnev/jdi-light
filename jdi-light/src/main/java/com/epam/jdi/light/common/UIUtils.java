@@ -6,16 +6,19 @@ import com.epam.jdi.light.elements.init.SiteInfo;
 import com.epam.jdi.light.elements.interfaces.base.*;
 import com.epam.jdi.light.elements.interfaces.common.IsButton;
 import com.epam.jdi.light.elements.pageobjects.annotations.Name;
+import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.func.JFunc2;
 import com.epam.jdi.tools.map.MapArray;
 import com.epam.jdi.tools.map.MultiMap;
 import com.epam.jdi.tools.pairs.Pair;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.epam.jdi.light.common.Exceptions.*;
+import static com.epam.jdi.light.common.TextTypes.*;
 import static com.epam.jdi.light.elements.init.PageFactory.*;
 import static com.epam.jdi.light.elements.init.UIFactory.*;
 import static com.epam.jdi.light.elements.pageobjects.annotations.WebAnnotationsUtil.*;
@@ -23,6 +26,7 @@ import static com.epam.jdi.tools.EnumUtils.*;
 import static com.epam.jdi.tools.LinqUtils.*;
 import static com.epam.jdi.tools.ReflectionUtils.*;
 import static com.epam.jdi.tools.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Created by Roman Iovlev on 26.09.2019
@@ -67,6 +71,33 @@ public final class UIUtils {
     public static JFunc2<Object, String, IClickable> GET_DEFAULT_BUTTON =
         (obj, buttonName) -> $("[type=submit]", obj).setName(buttonName);
 
+    public static JFunc1<UIElement, String> SMART_GET_TEXT = ui -> {
+        String text = ui.text(TEXT);
+        if (isNotBlank(text))
+            return text;
+        text = ui.text(INNER);
+        if (isNotBlank(text))
+            return text;
+        text = ui.text(VALUE);
+        return isNotBlank(text) ? text : "";
+    };
+    public static JFunc1<UIElement, String> SMART_LIST_TEXT = ui -> {
+        String text = ui.text(TEXT);
+        if (isNotBlank(text))
+            return text;
+        text = ui.text(INNER);
+        if (isNotBlank(text))
+            return text;
+        String id = ui.attr("id");
+        if (isNotBlank(id)) {
+            UIElement label = $(By.cssSelector("[for=" + id + "]"));
+            label.waitSec(0);
+            try {
+                text = label.getText();
+            } catch (Throwable ignore) { }
+        }
+        return isNotBlank(text) ? text : ui.text(VALUE);
+    };
     public static JFunc2<Object, String, IClickable> GET_BUTTON = (obj, buttonName) -> {
         List<Field> fields = getFields(obj, IsButton.class);
         if (fields.size() == 0)

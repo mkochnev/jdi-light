@@ -47,8 +47,9 @@ public class Form<T> extends Section {
         return GET_ACTION.execute(field, element, parent);
     }
     private String getFieldName(Field field, Object element) {
-        return field != null ? field.getName() :
-                (element != null ? element.toString() : "");
+        if (field != null)
+            return field.getName();
+        return element != null ? element.toString() : "";
     }
 
     private FormFilters filter = ALL;

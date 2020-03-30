@@ -656,33 +656,6 @@ public class UIElement extends JDIBase
         String result = timer().getResult(() -> noWait(() -> type.func.execute(this)));
         return result;
     }
-    public static JFunc1<UIElement, String> SMART_GET_TEXT = ui -> {
-        String text = ui.text(TEXT);
-        if (isNotBlank(text))
-            return text;
-        text = ui.text(INNER);
-        if (isNotBlank(text))
-            return text;
-        text = ui.text(VALUE);
-        return isNotBlank(text) ? text : "";
-    };
-    public static JFunc1<UIElement, String> SMART_LIST_TEXT = ui -> {
-        String text = ui.text(TEXT);
-        if (isNotBlank(text))
-            return text;
-        text = ui.text(INNER);
-        if (isNotBlank(text))
-            return text;
-        String id = ui.attr("id");
-        if (isNotBlank(id)) {
-            UIElement label = $(By.cssSelector("[for=" + id + "]"));
-            label.waitSec(0);
-            try {
-                text = label.getText();
-            } catch (Throwable ignore) { }
-        }
-        return isNotBlank(text) ? text : ui.text(VALUE);
-    };
     public UIElement find(String by) {
         return $(by, this);
     }

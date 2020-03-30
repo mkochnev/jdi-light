@@ -3,6 +3,7 @@ package com.epam.jdi.light.common;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.tools.func.JFunc1;
 
+import static com.epam.jdi.light.common.UIUtils.*;
 import static com.epam.jdi.light.elements.common.UIElement.*;
 
 /**
