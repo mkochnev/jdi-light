@@ -3,7 +3,9 @@ package com.epam.jdi.light.elements.init;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.base.UIListBase;
 import com.epam.jdi.light.elements.common.UIElement;
-import com.epam.jdi.light.elements.complex.*;
+import com.epam.jdi.light.elements.complex.DataList;
+import com.epam.jdi.light.elements.complex.JList;
+import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.composite.WebPage;
 import com.epam.jdi.light.elements.init.rules.InitRule;
 import com.epam.jdi.light.elements.init.rules.SetupRule;
@@ -20,20 +22,23 @@ import org.openqa.selenium.support.pagefactory.FieldDecorator;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static com.epam.jdi.light.common.Exceptions.*;
+import static com.epam.jdi.light.common.Exceptions.exception;
+import static com.epam.jdi.light.common.Exceptions.safeException;
+import static com.epam.jdi.light.driver.WebDriverFactory.getDriver;
 import static com.epam.jdi.light.driver.WebDriverFactory.useDriver;
-import static com.epam.jdi.light.driver.WebDriverFactory.*;
 import static com.epam.jdi.light.elements.init.InitActions.*;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.*;
 import static com.epam.jdi.light.elements.pageobjects.annotations.WebAnnotationsUtil.setDomain;
-import static com.epam.jdi.light.settings.JDISettings.*;
-import static com.epam.jdi.light.settings.WebSettings.*;
-import static com.epam.jdi.tools.LinqUtils.*;
+import static com.epam.jdi.light.settings.JDISettings.DRIVER;
+import static com.epam.jdi.light.settings.WebSettings.init;
+import static com.epam.jdi.tools.LinqUtils.filter;
+import static com.epam.jdi.tools.LinqUtils.map;
 import static com.epam.jdi.tools.ReflectionUtils.*;
-import static com.epam.jdi.tools.StringUtils.*;
+import static com.epam.jdi.tools.StringUtils.LINE_BREAK;
+import static com.epam.jdi.tools.StringUtils.splitCamelCase;
 import static java.lang.String.format;
-import static java.lang.reflect.Modifier.*;
-import static java.util.Arrays.*;
+import static java.lang.reflect.Modifier.isStatic;
+import static java.util.Arrays.asList;
 
 /**
  * Created by Roman Iovlev on 14.02.2018
@@ -57,7 +62,7 @@ public class PageFactory {
             try {
                 info.field = pageField;
                 if (info.field.getName().equals("searchPage"))
-                    System.out.println("");
+                    System.out.println();
                 setFieldWithInstance(info, null);
             } catch (Throwable ex) {
                 throw exception(ex, initException(pageField, site));
@@ -75,24 +80,28 @@ public class PageFactory {
         info.instance = getValueField(info.field, info.parent);
         //if (info.name().equals("colors3"))
         //    System.out.println("test");
-        if (info.instance == null)
+        if (info.instance == null) {
             initJdiField(info);
-        if (info.instance != null)
+        }
+        if (info.instance != null) {
             setupFieldUsingRules(info);
+        }
         return info.instance;
     }
 
     public static void initJdiField(SiteInfo info) {
-        if (info.type().isInterface())
+        if (info.type().isInterface()) {
             initUsingRules(info);
-        else
+        } else {
             initWithConstructor(info);
+        }
     }
     public static void setupFieldUsingRules(SiteInfo info) {
         MapArray<String, SetupRule> setupRules = SETUP_RULES.filter((k, r) ->
                 r.condition.execute(info));
-        if (setupRules.size() == 0)
+        if (setupRules.size() == 0) {
             return;
+        }
         String ruleName = "UNDEFINED";
         try {
             for(Pair<String, SetupRule> rule : setupRules) {
@@ -152,18 +161,19 @@ public class PageFactory {
     private static <T> T initUsingRules(SiteInfo info) {
         Pair<String, InitRule> firstRule = INIT_RULES.first((k,r) ->
                 r.condition.execute(info.field));
-        if (firstRule != null)
+        if (firstRule != null) {
             try {
-                return (T)(info.instance = firstRule.value.func.execute(info));
+                return (T) (info.instance = firstRule.value.func.execute(info));
             } catch (Exception ex) {
                 throw exception(ex, "Init rule '%s' failed. Can't init field '%s' on page '%s'",
-                    firstRule.key, info.name(), info.parentName());
+                        firstRule.key, info.name(), info.parentName());
             }
-        else
+        } else {
             throw exception("No init rules found for '%s' (you can add appropriate rule in InitActions.INIT_RULES)" + LINE_BREAK +
-                    "Maybe you can solve you problem by adding WebSettings.init() in your @BeforeSuite setUp() method" + LINE_BREAK +
-                    "or by adding corresponded mapping in InitActions.INTERFACES using add(...) method",
-                info.name());
+                            "Maybe you can solve you problem by adding WebSettings.init() in your @BeforeSuite setUp() method" + LINE_BREAK +
+                            "or by adding corresponded mapping in InitActions.INTERFACES using add(...) method",
+                    info.name());
+        }
     }
     private static void initWebPage(WebPage webPage) {
         webPage.driverName = DRIVER.name;
@@ -196,14 +206,16 @@ public class PageFactory {
         List<Field> fields = filter(poFields, f -> isJDIField(f) || isPageObject(f.getType()));
         SiteInfo pageInfo = new SiteInfo(info);
         pageInfo.parent = info.instance;
-        for (Field field : fields)
+        for (Field field : fields) {
             setField(field, pageInfo, info);
+        }
     }
 
     private static void initPage(Object page) {
         SiteInfo info = new SiteInfo(DRIVER.name, page);
-        if (isClass(page.getClass(), WebPage.class))
+        if (isClass(page.getClass(), WebPage.class)) {
             initWebPage((WebPage) page);
+        }
         initElements(info);
     }
 
