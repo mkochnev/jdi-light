@@ -99,9 +99,9 @@
     <build>
         <plugins>
             <plugin>
-                <!--                <groupId>org.codehaus.mojo</groupId>-->
-                <!--                <artifactId>aspectj-maven-plugin</artifactId>-->
-                <!--                <version>${aspectj.maven}</version>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>aspectj-maven-plugin</artifactId>-->
+<!--                <version>${aspectj.maven}</version>-->
                 <groupId>com.nickwongdev</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>1.12.6</version>
