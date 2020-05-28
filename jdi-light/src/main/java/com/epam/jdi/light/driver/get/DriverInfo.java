@@ -41,7 +41,7 @@ public class DriverInfo extends DataClass<DriverInfo> {
         return isEmpty(DRIVER.remoteUrl) && (isNotBlank(DRIVER.path) && isNotBlank(path.execute()) || downloadType != null);
     }
     public WebDriver getDriver() {
-        logger.debug("getDriver(): " + toString());
+//        logger.debug("getDriver(): " + toString());
         return isLocal()
             ? setupLocal()
             : setupRemote();
