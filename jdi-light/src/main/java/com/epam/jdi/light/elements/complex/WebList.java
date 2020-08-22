@@ -7,6 +7,7 @@ import com.epam.jdi.light.common.JDILocator;
 import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
+import com.epam.jdi.light.elements.init.UIFactory;
 import com.epam.jdi.light.elements.interfaces.base.HasUIList;
 import com.epam.jdi.light.elements.interfaces.base.SetValue;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.MarkupLocator;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.TextTypes.*;
 import static com.epam.jdi.light.driver.WebDriverByUtils.shortBy;
+import static com.epam.jdi.light.elements.init.UIFactory.*;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.getByType;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.JDISettings.ELEMENT;
@@ -66,6 +68,9 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     public WebList setup(JAction1<JDIBase> setup) {
         return setup(WebList.class, setup);
+    }
+    public List<WebElement> webElements() {
+        return elements(1).select(el -> el.get());
     }
     @Override
     public WebList setCore(JDIBase base) {
@@ -591,5 +596,15 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     public void offCache() {
         super.offCache();
         elements.useCache(false);
+    }
+    @Override
+    public WebList finds(String locator) {
+        List<WebElement> els = elements(1).selectMany(el -> el.finds(locator).webElements());
+        return $$(els, context + ">" + locator);
+    }
+    @Override
+    public WebList finds(By locator) {
+        List<WebElement> els = elements(1).selectMany(el -> el.finds(locator).webElements());
+        return $$(els, context + ">" + locator);
     }
 }

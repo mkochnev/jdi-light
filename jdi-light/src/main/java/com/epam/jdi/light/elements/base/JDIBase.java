@@ -487,7 +487,8 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
             return PRINT_ELEMENT.execute(this);
         } catch (Exception ex) { throw exception(ex, "Can't print element"); }
     }
-    private static String printWebElement(WebElement element) {
+
+    public static String printWebElement(WebElement element) {
         String asString = element.toString().replaceAll("css selector", "css");
         String result = asString.startsWith("WebElement->")
                 ? "" : "WebElement->";
@@ -497,10 +498,17 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         }
         return asString;
     }
+    public String printWebElement() {
+        if (webElement.hasValue())
+            return printWebElement(webElement.get());
+        if (webElements.hasValue() && webElements.get().size() > 0)
+            return printWebElement(webElements.get().get(0));
+        return "";
+    }
 
     public static JFunc1<JDIBase, String> PRINT_ELEMENT = element -> {
         if (element.webElement.hasValue())
-            return printWebElement(element.webElement.get());
+            return element.printWebElement();
         if (isBlank(element.varName))
             return element.context;
         return Switch(LOGS.logLevel).get(

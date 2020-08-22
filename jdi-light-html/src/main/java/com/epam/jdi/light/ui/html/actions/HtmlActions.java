@@ -7,8 +7,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 import static com.epam.jdi.light.actions.ActionHelper.*;
+import static com.epam.jdi.light.actions.ActionProcessor.jStack;
 import static com.epam.jdi.light.common.Exceptions.safeException;
 import static com.epam.jdi.light.settings.WebSettings.logger;
+import static com.epam.jdi.tools.LinqUtils.newList;
 
 /**
  * Created by Roman Iovlev on 14.02.2018
@@ -23,6 +25,10 @@ public class HtmlActions {
     @Around("jdiPointcut()")
     public Object jdiAround(ProceedingJoinPoint jp) {
         ActionObject jInfo = new ActionObject(jp);
+        if (jInfo.topLevel())
+            jStack.set(newList(jInfo));
+        else
+            jStack.get().add(jInfo);
         try {
             failedMethods.clear();
             BEFORE_JDI_ACTION.execute(jInfo);

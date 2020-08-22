@@ -68,19 +68,22 @@ public class UIFactory {
         return new WebList(els).setup(e->e.setName(name));
     }
     public static WebList $$(@MarkupLocator String locator) {
-        return list(locator);
+        return JDITalk.list(locator);
     }
     public static WebList $$(@MarkupLocator String locator, Object parent) {
-        return list(locator).setup(j->j.setParent(parent));
+        return JDITalk.list(locator).setup(j->j.setParent(parent));
     }
     public static WebList $$(@MarkupLocator By locator) {
-        return list(locator);
+        return JDITalk.list(locator);
     }
     public static WebList $$(@MarkupLocator By locator, Object parent) {
-        return list(locator).setup(j->j.setParent(parent));
+        return JDITalk.list(locator).setup(j->j.setParent(parent));
     }
     public static WebList $$(List<WebElement> els, String name) {
-        return list(els, name);
+        return JDITalk.list(els, name);
+    }
+    public static WebList $$(List<WebElement> els) {
+        return JDITalk.list(els);
     }
 
     // Use JDITalk

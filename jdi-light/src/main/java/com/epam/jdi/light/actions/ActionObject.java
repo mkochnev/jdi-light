@@ -2,6 +2,7 @@ package com.epam.jdi.light.actions;
 
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
+import com.epam.jdi.light.logger.LogLevels;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.Safe;
 import com.epam.jdi.tools.func.JFunc1;
@@ -12,18 +13,22 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.epam.jdi.light.actions.ActionHelper.*;
 import static com.epam.jdi.light.actions.ActionOverride.getOverrideAction;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.settings.JDISettings.TIMEOUTS;
 import static com.epam.jdi.tools.ReflectionUtils.isInterface;
+import static java.util.UUID.randomUUID;
 
 public class ActionObject {
     private JoinPoint jp;
+    private UUID uuid;
 
-    public ActionObject(ProceedingJoinPoint joinPoint) {
+    public ActionObject(JoinPoint joinPoint) {
         this.jp = joinPoint;
+        uuid = randomUUID();
         try {
             this.elementTimeout = element() != null
                 ? element().base().getTimeout()
@@ -32,6 +37,7 @@ public class ActionObject {
             this.elementTimeout = 10;
         }
     }
+    public UUID uuid() { return uuid; }
     public JoinPoint jp() { return jp; }
     public Object execute() throws Throwable {
         return pjp().proceed();
@@ -46,6 +52,9 @@ public class ActionObject {
     public String stepUId = "";
     public boolean topLevel() {
         return aroundCount() == 1;
+    }
+    public LogLevels logLevel() {
+        return ActionHelper.logLevel(jp);
     }
     public Object object() { return obj.get(); }
     private CacheValue<Object> obj = new CacheValue<>(

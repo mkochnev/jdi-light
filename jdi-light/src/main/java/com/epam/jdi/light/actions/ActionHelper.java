@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.epam.jdi.light.actions.ActionProcessor.jStack;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.Exceptions.safeException;
 import static com.epam.jdi.light.common.OutputTemplates.*;
@@ -144,7 +145,7 @@ public class ActionHelper {
         if (jInfo.topLevel()) {
             processBeforeAction(message, jInfo);
         }
-        if (LOGS.writeToAllure && logLevel(jp).equalOrMoreThan(INFO) && (allureSteps.get().isEmpty() || !allureSteps.get().contains(message))) {
+        if (LOGS.writeToAllure && logLevel(jInfo).equalOrMoreThan(INFO) && (allureSteps.get().isEmpty() || !allureSteps.get().contains(message))) {
             jInfo.stepUId = startStep(message);
             allureSteps.get().add(message);
         }
@@ -153,7 +154,7 @@ public class ActionHelper {
         allureSteps.reset();
         JoinPoint jp = jInfo.jp();
         if (LOGS.writeToLog)
-            logger.toLog(message, logLevel(jp));
+            logger.toLog(message, logLevel(jInfo));
         if (PAGE.checkPageOpen != NONE || VISUAL_PAGE_STRATEGY == CHECK_NEW_PAGE || LOGS.screenStrategy.contains(NEW_PAGE))
             processPage(jInfo);
         if (VISUAL_ACTION_STRATEGY == ON_VISUAL_ACTION)
@@ -191,7 +192,7 @@ public class ActionHelper {
     }
     public static void beforeStepAction(JoinPoint jp) {
         String message = TRANSFORM_LOG_STRING.execute(getBeforeLogString(jp));
-        logger.toLog(message, logLevel(jp));
+        logger.toLog(message, logLevel(new ActionObject(jp)));
     }
     private static void visualValidation(JoinPoint jp, String message) {
         Object obj = jp.getThis();
@@ -223,14 +224,16 @@ public class ActionHelper {
     static void afterAction(ActionObject jInfo, Object result) {
         JoinPoint jp = jInfo.jp();
         if (logResult(jp)) {
-            LogLevels logLevel = logLevel(jp);
+            LogLevels logLevel = logLevel(jInfo);
             if (result == null || isInterface(getJpClass(jp), JAssert.class))
                 logger.debug("Done");
             else {
                 String text = result.toString();
+                String message = ">>> ";
                 if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
-                    text = text.substring(0, CUT_STEP_TEXT) + "...";
-                logger.toLog(">>> " + text, logLevel);
+                    message += text.substring(0, CUT_STEP_TEXT) + "...";
+                logger.toLog(message, logLevel);
+                attachText(">>>", "text/plain", text);
             }
         }
         TIMEOUTS.element.reset();
@@ -255,9 +258,7 @@ public class ActionHelper {
     }
     public static Object afterJdiAction(ActionObject jInfo, Object result) {
         passStep(jInfo.stepUId);
-        if (jInfo.topLevel()) {
-            afterAction(jInfo, result);
-        }
+        afterAction(jInfo, result);
         return result;
     }
     public static JFunc2<ActionObject, Object, Object> AFTER_JDI_ACTION = ActionHelper::afterJdiAction;
@@ -366,6 +367,11 @@ public class ActionHelper {
         } catch (Exception ex) {
             throw exception(ex, "Surround method issue: Can't get method name template");
         }
+    }
+    static LogLevels logLevel(ActionObject jInfo) {
+        LogLevels currentLevel = logLevel(jInfo.jp());
+        LogLevels topLevel = jStack.get().get(0).logLevel();
+        return currentLevel.equalOrLessThan(topLevel) ? currentLevel : topLevel;
     }
     static LogLevels logLevel(JoinPoint jp) {
         Method m = getJpMethod(jp).getMethod();
