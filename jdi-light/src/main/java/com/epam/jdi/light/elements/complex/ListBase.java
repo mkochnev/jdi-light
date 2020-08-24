@@ -13,7 +13,6 @@ import com.epam.jdi.light.elements.pageobjects.annotations.Title;
 import com.epam.jdi.tools.CacheValue;
 import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.func.JFunc1;
-import com.epam.jdi.tools.map.MultiMap;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -51,9 +50,9 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     public Class<?> initClass = UIElement.class;
 
     private boolean actualMapValue() {
-        return map.hasValue() && map.get().size() > 0 && isActual(map.get().get(0).value);
+        return values.hasValue() && values.get().size() > 0 && isActual(values.get().get(0));
     }
-    protected CacheValue<MultiMap<String, T>> map = new CacheValue<>(() -> new MultiMap<String, T>().ignoreKeyCase());
+    protected CacheValue<List<T>> values = new CacheValue<>();
     private boolean isActual(T element) {
         try {
             element.getTagName();
@@ -62,10 +61,10 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     }
 
     @JDIAction(level = DEBUG)
-    public MultiMap<String, T> elements(int minAmount) {
+    public List<T> elements(int minAmount) {
         if (actualMapValue())
-            return map.get();
-        return list().elements(minAmount).toMultiMap(this::toT);
+            return values.get();
+        return LinqUtils.map(list().elements(minAmount), this::toT);
     }
 
     /**
@@ -181,7 +180,7 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
     @JDIAction(level = DEBUG)
     public void clear() {
         list().clear();
-        map.clear();
+        values.clear();
     }
 
     public void setValue(String value) {

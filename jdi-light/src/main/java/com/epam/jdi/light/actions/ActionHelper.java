@@ -217,7 +217,7 @@ public class ActionHelper {
     }
     public static JAction1<ActionObject> BEFORE_JDI_ACTION = ActionHelper::beforeJdiAction;
     public static Object afterStepAction(ActionObject jInfo, Object result) {
-        passStep(jInfo.stepUId);
+        passStep(jInfo.stepUId, result, getJpClass(jInfo.jp()));
         afterAction(jInfo, result);
         return result;
     }
@@ -225,7 +225,7 @@ public class ActionHelper {
         JoinPoint jp = jInfo.jp();
         if (logResult(jp)) {
             LogLevels logLevel = logLevel(jInfo);
-            if (result == null || isInterface(getJpClass(jp), JAssert.class))
+            if (result == null || isInterface(getJpClass(jp), JAssert.class) || isInterface(getJpClass(jStack.get().get(0).jp()), JAssert.class))
                 logger.debug("Done");
             else {
                 String text = result.toString();
@@ -233,7 +233,6 @@ public class ActionHelper {
                 if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
                     message += text.substring(0, CUT_STEP_TEXT) + "...";
                 logger.toLog(message, logLevel);
-                attachText(">>>", "text/plain", text);
             }
         }
         TIMEOUTS.element.reset();
@@ -257,7 +256,7 @@ public class ActionHelper {
                 : jp.getSignature().getDeclaringType();
     }
     public static Object afterJdiAction(ActionObject jInfo, Object result) {
-        passStep(jInfo.stepUId);
+        passStep(jInfo.stepUId, result, getJpClass(jInfo.jp()));
         afterAction(jInfo, result);
         return result;
     }

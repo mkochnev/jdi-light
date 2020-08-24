@@ -7,16 +7,15 @@ import com.epam.jdi.light.common.JDILocator;
 import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.common.UIElement;
-import com.epam.jdi.light.elements.init.UIFactory;
 import com.epam.jdi.light.elements.interfaces.base.HasUIList;
 import com.epam.jdi.light.elements.interfaces.base.SetValue;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.MarkupLocator;
 import com.epam.jdi.tools.CacheValue;
+import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc;
 import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.map.MapArray;
-import com.epam.jdi.tools.map.MultiMap;
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hamcrest.Matcher;
@@ -26,6 +25,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,11 +41,14 @@ import static com.epam.jdi.light.settings.JDISettings.ELEMENT;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
 import static com.epam.jdi.tools.EnumUtils.getEnumValues;
+import static com.epam.jdi.tools.LinqUtils.*;
+import static com.epam.jdi.tools.LinqUtils.map;
 import static com.epam.jdi.tools.LinqUtils.toList;
 import static com.epam.jdi.tools.PrintUtils.print;
 import static com.epam.jdi.tools.StringUtils.namesEqual;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -70,7 +75,9 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return setup(WebList.class, setup);
     }
     public List<WebElement> webElements() {
-        return elements(1).select(el -> el.get());
+        if (isUseCache() && webElements.hasValue())
+            return webElements.get();
+        return elements(1).webElements();
     }
     @Override
     public WebList setCore(JDIBase base) {
@@ -78,19 +85,21 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return this;
     }
     public WebList() {
-        elements.useCache(true);
+        webElements.useCache(true);
         textType = SMART_LIST;
     }
     public WebList(@MarkupLocator By locator) { this(); setLocator(locator);}
     public WebList(List<WebElement> elements) {
         this(); setWebElements(elements);
     }
-    public WebList(MapArray<String, UIElement> map) {
-        this(); elements.set(new MultiMap<>(map));
+    public static WebList newList(List<UIElement> elements) {
+        return new WebList(LinqUtils.map(elements, JDIBase::get));
     }
-    public WebList setValues(MultiMap<String, UIElement> map) {
-        this.elements.set(map);
-        return this;
+    public WebList(MapArray<String, UIElement> map) {
+        this.map.set(map);
+    }
+    public WebList(List<String> header, List<UIElement> elements) {
+        this(new MapArray<>(header, elements));
     }
     public WebList(JDIBase base) {
         super(base);
@@ -110,8 +119,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         super.setName(name);
         return this;
     }
-    protected CacheValue<MultiMap<String, UIElement>> elements =
-            new CacheValue<>(() -> new MultiMap<String, UIElement>().ignoreKeyCase());
+    protected CacheValue<MapArray<String, UIElement>> map = new CacheValue<>();
 
     protected String nameFromIndex(int i) {
         return nameFromValue(i+1+"");
@@ -121,28 +129,36 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
 
     @JDIAction(level = DEBUG)
-    public MultiMap<String, UIElement> elements(int minAmount) {
-        if (elements.isUseCache() && elements.hasValue() && isActual() && elements.get().size() >= minAmount)
-            return elements.get();
+    public WebList elements(int minAmount) {
+        return new WebList(uiElements(minAmount));
+    }
+    protected List<WebElement> uiElements(int minAmount) {
+        if (isUseCache() && webElements.hasValue() && isActual() && webElements.get().size() >= minAmount)
+            return webElements.get();
         if (locator.isTemplate())
             throw exception("You call method that can't be used with template locator. " +
-                "Please correct %s locator to get List<WebElement> in order to use this method", shortBy(getLocator(), this));
-        MultiMap<String, UIElement> result = getListElements(minAmount);
-        if (elements.isUseCache())
-            elements.set(result);
-        return result;
+                    "Please correct %s locator to get List<WebElement> in order to use this method", shortBy(getLocator(), this));
+        return getListElements(minAmount);
     }
-    protected MultiMap<String, UIElement> getListElements(int minAmount) {
-        MultiMap<String, UIElement> result = new MultiMap<String, UIElement>().ignoreKeyCase();
-        List<WebElement> we = getList(minAmount);
-        int length = we.size();
-        for (int i=0; i < length; i++) {
-            int j = i;
-            UIElement el = initElement(we.get(j), () -> getList(minAmount).get(j), j);
-            result.add(getElementName(j, el), el);
-        }
-        return result;
+    @Override
+    public Iterator<UIElement> iterator() {
+        return LinqUtils.map(uiElements(0), el -> $(el)).iterator();
     }
+    protected List<WebElement> getListElements(int minAmount) {
+        return getList(minAmount);
+    }
+    // TODO remove
+    // protected MultiMap<String, UIElement> getListElements(int minAmount) {
+    //     MultiMap<String, UIElement> result = new MultiMap<String, UIElement>().ignoreKeyCase();
+    //     List<WebElement> we = getList(minAmount);
+    //     int length = we.size();
+    //     for (int i=0; i < length; i++) {
+    //         int j = i;
+    //         UIElement el = initElement(we.get(j), () -> getList(minAmount).get(j), j);
+    //         result.add(getElementName(j, el), el);
+    //     }
+    //     return result;
+    // }
     @Override
     public UIElement first() {
         return get(startIndex);
@@ -164,22 +180,16 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         }
     }
     protected boolean hasKey(String value) {
-        List<String> keys = elements(1).keys();
-        if (keys.isEmpty())
-            return false;
-        for (String key : keys)
-            if (namesEqual(key, value))
-                return true;
-        return false;
+        return map.hasValue() && any(map.get().keys(), key -> namesEqual(key, value));
     }
     /**
      * @param value
      */
     @JDIAction(level = DEBUG) @Override
     public UIElement get(String value) {
-        return !locator.isTemplate() && hasKey(value)
-            ? elements(1).get(value)
-            : getUIElement(value);
+        if (hasKey(value))
+            return map.get().get(value);
+        return getUIElement(value);
     }
 
     public UIElement getUIElement(String value) {
@@ -189,11 +199,10 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
             refresh();
             if (locator.isXPath())
                 return new UIElement(base(), locator.addText(value), nameFromValue(value), parent);
-            MultiMap<String, UIElement> result = timer().getResultByCondition(
-                () -> elements(1), els -> hasKey(value));
+            UIElement result = LinqUtils.first(elements(1), el -> namesEqual(el.getText(), value));
             if (result != null)
-                return elements(1).get(value);
-            throw exception("Can't get '%s'. No elements with this name found", value);
+                return result;
+            throw exception("Failed to get '%s' in list '%s'. No elements with this name found", value, getName());
         }
     }
     private JFunc1<UIElement, String> UIELEMENT_NAME;
@@ -213,7 +222,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     @Override
     public boolean isUseCache() {
-        return elements.isUseCache();
+        return webElements.isUseCache();
     }
 
     /**
@@ -231,12 +240,12 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         if (index < startIndex)
             throw exception("Can't get element with index '%s'. Index should be %s or more", index, startIndex);
         int getIndex = index - startIndex;
-        if (locator.isNull() && elements.isUseCache() && elements.get().size() > getIndex)
-            return elements.get().get(getIndex).value;
-        return (locator.isTemplate()
+        if (locator.isNull() && isUseCache() && webElements.get().size() > getIndex)
+            return $(webElements.get().get(getIndex));
+        UIElement element = locator.isTemplate()
                 ? tryGetByIndex(index)
-                : getElementByLocator(getIndex, index))
-                .setName(nameFromIndex(index));
+                : getElementByLocator(getIndex, index);
+        return element.setName(nameFromIndex(index));
     }
     private UIElement getElementByLocator(int getIndex, int index) {
         return locator.isXPath()
@@ -283,7 +292,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     @JDIAction("Check all '{name}' unchecked options")
     public void checkAll() {
-        for (UIElement checkbox : elements(1).values()) {
+        for (UIElement checkbox : elements(1)) {
             if (checkbox.isEnabled() && !selected(checkbox)) {
                 checkbox.click();
             }
@@ -291,7 +300,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     @JDIAction("Uncheck all '{name}' checked options")
     public void uncheckAll() {
-        for (UIElement checkbox : elements(1).values()) {
+        for (UIElement checkbox : elements(1)) {
             if (checkbox.isEnabled() && selected(checkbox)) {
                 checkbox.click();
             }
@@ -300,7 +309,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @JDIAction("Check only '{0}' in '{name}' list")
     public void check(String... names) {
         List<String> listNames = asList(names);
-        for (UIElement value : elements(names.length).values()) {
+        for (UIElement value : elements(names.length)) {
             if (value.isDisabled()) continue;
             if (selected(value) && !listNames.contains(value.labelText().trim())
                     || !selected(value) && listNames.contains(value.labelText().trim()))
@@ -310,7 +319,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @JDIAction("Uncheck '{0}' checkboxes in '{name}' checklist")
     public void uncheck(String... names) {
         List<String> listNames = asList(names);
-        for (UIElement value : elements(names.length).values()) {
+        for (UIElement value : elements(names.length)) {
             if (value.isDisabled()) continue;
             if (selected(value) && listNames.contains(value.labelText().trim())
                     || !selected(value) && !listNames.contains(value.labelText().trim()))
@@ -321,13 +330,13 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     public void check(int... indexes) {
         List<Integer> listIndexes = toList(indexes);
         int max = max(Ints.asList(indexes));
-        MultiMap<String, UIElement> elementsMap = elements(max - startIndex + 1);
+        List<UIElement> elements = elements(max - startIndex + 1);
         int i = startIndex;
-        for (UIElement value : elementsMap.values()) {
-            if (value.isDisabled()) continue;
-            if (selected(value) && !listIndexes.contains(i)
-                    || !selected(value) && listIndexes.contains(i))
-                value.click();
+        for (UIElement element : elements) {
+            if (element.isDisabled()) continue;
+            if (selected(element) && !listIndexes.contains(i)
+                    || !selected(element) && listIndexes.contains(i))
+                element.click();
             i++;
         }
     }
@@ -335,13 +344,13 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     public void uncheck(int... indexes) {
         List<Integer> listIndexes = toList(indexes);
         int max = max(Ints.asList(indexes));
-        MultiMap<String, UIElement> elementsMap = elements(max - startIndex + 1);
+        List<UIElement> elements = elements(max - startIndex + 1);
         int i = startIndex;
-        for (UIElement value : elementsMap.values()) {
-            if (value.isDisabled()) continue;
-            if (selected(value) && listIndexes.contains(i)
-                    || !selected(value) && !listIndexes.contains(i))
-                value.click();
+        for (UIElement element : elements) {
+            if (element.isDisabled()) continue;
+            if (selected(element) && listIndexes.contains(i)
+                    || !selected(element) && !listIndexes.contains(i))
+                element.click();
             i++;
         }
     }
@@ -420,7 +429,8 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
      */
     @JDIAction(level = DEBUG)
     public void refresh() {
-        elements.clear();
+        webElements.clear();
+        map.clear();
     }
 
     /**
@@ -454,8 +464,8 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @Override
     public int size() {
         try {
-            return elements.isUseCache() && elements.get().size() > 0
-                ? elements.get().size()
+            return isUseCache() && webElements.hasValue() && webElements.get().size() > 0
+                ? webElements.get().size()
                 : IList.super.size();
         } catch (Exception ex) {
             return 0;
@@ -474,7 +484,38 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @JDIAction("Get '{name}' values")
     public List<String> values() {
         refresh();
-        return noValidation(() -> elements(0)).keys();
+        WebList elements = noValidation(() -> elements(0));
+        List<String> values = LinqUtils.map(elements, el -> el.noValidation(() -> el.text(base().textType)));
+        HashSet<String> unique = new HashSet<>(values);
+        if (unique.size() == values.size())
+            map.set(new MapArray<>(values, elements));
+        // else {
+        //     map.set(solveUniqueness(unique, values, elements));
+        // }
+        return values;
+    }
+    private MapArray<String, UIElement> solveUniqueness(HashSet<String> unique, List<String> values, WebList elements) {
+        MapArray<String, UIElement> result = new MapArray<>();
+        for (String u : unique) {
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < values.size(); i ++) {
+                if (values.get(i).equals(u))
+                    indices.add(i);
+            }
+            if (indices.size() == 1)
+                result.add(u, elements.get(indices.get(0)));
+            else {
+                for (int j : indices) {
+                    try {
+                        UIElement element = elements.get(j + startIndex);
+                        element.text(base().textType);
+                        result.add(u, element);
+                        break;
+                    } catch (Exception ignore) { }
+                }
+            }
+        }
+        return result;
     }
     @JDIAction("Get '{name}' values")
     public List<String> getValuesFast() {
@@ -557,13 +598,13 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     protected boolean isActual() {
         try {
-            return elements.isUseCache() && elements.get().size() > 0 && isActual(elements.get().get(0).value);
+            return isUseCache() && webElements.get().size() > 0 && isActual(webElements.get().get(0));
         } catch (Exception ex) { return false; }
     }
 
-    protected boolean isActual(UIElement element) {
+    protected boolean isActual(WebElement element) {
         try {
-            return isNotBlank(element.base().get().getTagName());
+            return isNotBlank(element.getTagName());
         } catch (Exception ex) { return false; }
     }
     protected UIElement initElement(JFunc<WebElement> func) {
@@ -595,12 +636,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     }
     public void offCache() {
         super.offCache();
-        elements.useCache(false);
-    }
-    @Override
-    public WebList finds(String locator) {
-        List<WebElement> els = elements(1).selectMany(el -> el.finds(locator).webElements());
-        return $$(els, context + ">" + locator);
+        map.useCache(false);
     }
     @Override
     public WebList finds(By locator) {

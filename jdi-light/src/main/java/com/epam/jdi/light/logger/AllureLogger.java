@@ -1,5 +1,7 @@
 package com.epam.jdi.light.logger;
 
+import com.epam.jdi.light.actions.ActionObject;
+import com.epam.jdi.light.asserts.generic.JAssert;
 import io.qameta.allure.model.StepResult;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +11,10 @@ import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.elements.composite.WebPage.getHtml;
 import static com.epam.jdi.light.logger.AllureLogger.AttachmentStrategy.OFF;
 import static com.epam.jdi.light.logger.AllureLogger.AttachmentStrategy.ON_FAIL;
+import static com.epam.jdi.light.logger.LogLevels.STEP;
 import static com.epam.jdi.light.settings.JDISettings.LOGS;
+import static com.epam.jdi.light.settings.WebSettings.logger;
+import static com.epam.jdi.tools.ReflectionUtils.isInterface;
 import static io.qameta.allure.Allure.addAttachment;
 import static io.qameta.allure.aspects.StepsAspects.getLifecycle;
 import static io.qameta.allure.model.Status.FAILED;
@@ -62,10 +67,12 @@ public class AllureLogger {
         }
     }
 
-    public static void passStep(String uuid) {
+    public static void passStep(String uuid, Object result, Class<?> jpClass) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
         getLifecycle().updateStep(uuid, s -> s.setStatus(PASSED));
+        if (result != null && !isInterface(jpClass, JAssert.class))
+            attachText("Actual result", "text/plain", result.toString());
         getLifecycle().stopStep(uuid);
     }
 

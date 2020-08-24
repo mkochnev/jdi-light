@@ -462,9 +462,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public String printContext() {
         JDIBase jdiBase = getBase(parent);
         if (jdiBase == null) return "";
-        String locator = jdiBase.getLocator() == null
-                ? ""
-                : jdiBase.locator.printLocator();
+        String locator = jdiBase.locator.printLocator();
         if (jdiBase.parent == null)
             return locator;
         if (isBlank(locator))
@@ -493,7 +491,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         String result = asString.startsWith("WebElement->")
                 ? "" : "WebElement->";
         if (asString.contains(")]")) {
-            String s = asString.split("-> ")[1];
+            String s = asString.substring(asString.indexOf("-> ")+3).replaceAll("]* -> ", "->");
             return result + s.substring(0,s.length()-1);
         }
         return asString;
@@ -544,5 +542,5 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         webElement.useCache(false);
         webElements.useCache(false);
     }
-    public boolean isUseCache() { return webElement.isUseCache() && webElements.isUseCache(); }
+    public boolean isUseCache() { return webElement.isUseCache() || webElements.isUseCache(); }
 }

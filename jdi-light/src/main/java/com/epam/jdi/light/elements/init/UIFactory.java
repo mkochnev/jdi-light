@@ -26,9 +26,10 @@ public class UIFactory {
     // Use JDITalk
     @Deprecated
     public static UIElement element(@MarkupLocator String locator) {
-        return locator.matches("[A-Z].*")
-            ? new UIElement().setName(locator)
+        UIElement element = locator.matches("[A-Z].*")
+            ? new UIElement()
             : element(defineLocator(locator));
+        return element.setName(locator);
     }
     // Use JDITalk
     @Deprecated
@@ -53,9 +54,10 @@ public class UIFactory {
     // Use JDITalk
     @Deprecated
     public static WebList list(@MarkupLocator String locator) {
-        return locator.matches("[A-Z].*")
+        WebList list = locator.matches("[A-Z].*")
                 ? new WebList()
                 : list(defineLocator(locator));
+        return list.setName(locator);
     }
     // Use JDITalk
     @Deprecated

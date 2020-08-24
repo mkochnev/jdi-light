@@ -76,8 +76,8 @@ public class Line implements IList<String>, IBaseElement {
      * @return List
      */
     @JDIAction(level = DEBUG)
-    public MultiMap<String, String> elements(int minAmount) {
-        return getData(minAmount);
+    public List<String> elements(int minAmount) {
+        return getData(minAmount).values();
     }
     public MultiMap<String, UIElement> uiElements() {
         return new MultiMap<>(headers, elements.indexFromZero()).ignoreKeyCase();
@@ -92,7 +92,7 @@ public class Line implements IList<String>, IBaseElement {
             cell.makePhoto();
             result.add(cell);
         }
-        elements = new WebList().setValues(new MultiMap<>(headers, result).ignoreKeyCase());
+        elements = new WebList(headers, result);
     }
     public boolean visualCompareTo(Line line) {
         for (Pair<String, UIElement> cell : uiElements())
@@ -120,22 +120,25 @@ public class Line implements IList<String>, IBaseElement {
         return setupInstance.execute(instance);
     }
     public <D> D asData(Class<D> data) {
-        return getType("asData", data, instance -> {
-            int i = 0;
-            List<Field> fields = asList(data.getDeclaredFields());
-            for (String name : headers) {
-                Field field = LinqUtils.first(fields, f -> namesEqual(getElementName(f), name));
-                if (field != null)
-                    try {
-                        setPrimitiveField(field, instance, getList(i).get(i));
-                    } catch (Exception ex) {
-                        throw exception(ex, "Can't set table value '%s' to field '%s'", getData(i).get(i), field.getName());
-                    }
-                i++;
-            }
-            return instance;
-        });
+        return getType("asData", data, instance -> getInstance(this, data, headers, instance));
     }
+
+    protected static <D> D getInstance(Line line, Class<D> data, List<String> headers, D instance) {
+        int i = 0;
+        List<Field> fields = asList(data.getDeclaredFields());
+        for (String name : headers) {
+            Field field = LinqUtils.first(fields, f -> namesEqual(getElementName(f), name));
+            if (field != null)
+                try {
+                    setPrimitiveField(field, instance, line.getList(i).get(i));
+                } catch (Exception ex) {
+                    throw exception(ex, "Can't set table value '%s' to field '%s'", line.getData(i).get(i), field.getName());
+                }
+            i++;
+        }
+        return instance;
+    }
+
     public <D> D asData(Class<D> data, MapArray<String, String> line) {
         return getType("asDataLine", data, instance -> {
             for (Pair<String, String> cell : line) {

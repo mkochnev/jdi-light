@@ -28,6 +28,7 @@ import java.util.List;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
 import static com.epam.jdi.light.elements.base.JDIBase.STRING_SIMPLIFY;
+import static com.epam.jdi.light.elements.complex.WebList.newList;
 import static com.epam.jdi.light.elements.complex.table.Line.initLine;
 import static com.epam.jdi.light.elements.complex.table.TableMatcher.TABLE_MATCHER;
 import static com.epam.jdi.light.elements.init.UIFactory.$;
@@ -211,7 +212,7 @@ public abstract class BaseTable<T extends BaseTable<?,?>, A extends BaseTableAss
         if (columns.get().has(colNum+""))
             return columns.get().get(colNum+"");
         WebList result = cells.isGotAll()
-            ? new WebList(cells.get().get(colNum + ""))
+            ? newList(cells.get().get(colNum + "").values())
             : getColumn(colNum);
         columns.get().update(colNum + "", result);
         return result;
