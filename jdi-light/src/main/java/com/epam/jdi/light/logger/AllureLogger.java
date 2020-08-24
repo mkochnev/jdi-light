@@ -1,6 +1,5 @@
 package com.epam.jdi.light.logger;
 
-import com.epam.jdi.light.actions.ActionObject;
 import com.epam.jdi.light.asserts.generic.JAssert;
 import io.qameta.allure.model.StepResult;
 
@@ -11,9 +10,7 @@ import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.elements.composite.WebPage.getHtml;
 import static com.epam.jdi.light.logger.AllureLogger.AttachmentStrategy.OFF;
 import static com.epam.jdi.light.logger.AllureLogger.AttachmentStrategy.ON_FAIL;
-import static com.epam.jdi.light.logger.LogLevels.STEP;
 import static com.epam.jdi.light.settings.JDISettings.LOGS;
-import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.ReflectionUtils.isInterface;
 import static io.qameta.allure.Allure.addAttachment;
 import static io.qameta.allure.aspects.StepsAspects.getLifecycle;
