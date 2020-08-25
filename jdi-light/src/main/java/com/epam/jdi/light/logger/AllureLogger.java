@@ -64,12 +64,10 @@ public class AllureLogger {
         }
     }
 
-    public static void passStep(String uuid, Object result, Class<?> jpClass) {
+    public static void passStep(String uuid, Object result) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
         getLifecycle().updateStep(uuid, s -> s.setStatus(PASSED));
-        if (result != null && !isInterface(jpClass, JAssert.class))
-            attachText("Actual result", "text/plain", result.toString());
         getLifecycle().stopStep(uuid);
     }
 

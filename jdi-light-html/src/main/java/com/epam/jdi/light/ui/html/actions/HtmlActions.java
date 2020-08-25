@@ -19,7 +19,7 @@ import static com.epam.jdi.tools.LinqUtils.newList;
 @SuppressWarnings("unused")
 @Aspect
 public class HtmlActions {
-    @Pointcut("execution(* *(..)) && @annotation(com.epam.jdi.light.common.JDIAction)")
+    @Pointcut("within(com.epam.jdi.light.ui.html..*) && @annotation(com.epam.jdi.light.common.JDIAction)")
     protected void jdiPointcut() { }
 
     @Around("jdiPointcut()")

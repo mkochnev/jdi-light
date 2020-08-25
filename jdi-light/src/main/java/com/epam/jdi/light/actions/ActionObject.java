@@ -80,11 +80,11 @@ public class ActionObject {
     private CacheValue<Integer> timeout = new CacheValue<>(this::getTimeout);
     private int getTimeout() {
         JDIAction ja = jp != null
-                ? getJdiAction(jp)
-                : null;
+            ? getJdiAction(jp)
+            : null;
         return ja != null && ja.timeout() != -1
-                ? ja.timeout()
-                : elementTimeout;
+            ? ja.timeout()
+            : elementTimeout;
     }
 
     private void resetElementTimeout() {

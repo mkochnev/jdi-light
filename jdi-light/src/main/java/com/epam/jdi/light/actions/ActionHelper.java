@@ -218,8 +218,13 @@ public class ActionHelper {
     }
     public static JAction1<ActionObject> BEFORE_JDI_ACTION = ActionHelper::beforeJdiAction;
     public static Object afterStepAction(ActionObject jInfo, Object result) {
-        passStep(jInfo.stepUId, result, getJpClass(jInfo.jp()));
         afterAction(jInfo, result);
+        passStep(jInfo.stepUId, result);
+        return result;
+    }
+    public static Object afterJdiAction(ActionObject jInfo, Object result) {
+        afterAction(jInfo, result);
+        passStep(jInfo.stepUId, result);
         return result;
     }
     static void afterAction(ActionObject jInfo, Object result) {
@@ -230,15 +235,22 @@ public class ActionHelper {
                 logger.debug("Done");
             else {
                 String text = result.toString();
-                String message = ">>> ";
-                if (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5)
-                    message += text.substring(0, CUT_STEP_TEXT) + "...";
-                logger.toLog(message, logLevel);
+                if (jInfo.topLevel()) {
+                    String message = ">>> " + (logLevel == STEP && text.length() > CUT_STEP_TEXT + 5
+                        ? text.substring(0, CUT_STEP_TEXT) + "..."
+                        : text);
+                    logger.toLog(message, logLevel);
+                }
+                if (LOGS.writeToAllure && isNotBlank(jInfo.stepUId)) {
+                    attachText("Actual result", "text/plain", text);
+                }
             }
         }
         TIMEOUTS.element.reset();
     }
     public static JFunc2<ActionObject, Object, Object> AFTER_STEP_ACTION = ActionHelper::afterStepAction;
+    public static JFunc2<ActionObject, Object, Object> AFTER_JDI_ACTION = ActionHelper::afterJdiAction;
+
     static boolean logResult(JoinPoint jp) {
         if (!LOGS.writeToLog)
             return false;
@@ -256,12 +268,6 @@ public class ActionHelper {
                 ? jp.getThis().getClass()
                 : jp.getSignature().getDeclaringType();
     }
-    public static Object afterJdiAction(ActionObject jInfo, Object result) {
-        passStep(jInfo.stepUId, result, getJpClass(jInfo.jp()));
-        afterAction(jInfo, result);
-        return result;
-    }
-    public static JFunc2<ActionObject, Object, Object> AFTER_JDI_ACTION = ActionHelper::afterJdiAction;
     //region Private
     public static String getBeforeLogString(JoinPoint jp) {
         String actionName = GET_ACTION_NAME.execute(jp);
@@ -420,9 +426,9 @@ public class ActionHelper {
         return result;
     }
     static MapArray<String, Object> core(JoinPoint jp) {
-        Class cl = jp.getSignature().getDeclaringType();
-        if (jp.getThis() != null && isInterface(cl, ICoreElement.class)) {
-            UIElement el = ((ICoreElement) jp.getThis()).core();
+        Object instance = jp.getThis();
+        if (instance != null && isInterface(instance.getClass(), ICoreElement.class)) {
+            UIElement el = ((ICoreElement) instance).core();
             return getAllFields(el);
         }
         return new MapArray<>();

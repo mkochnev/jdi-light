@@ -49,7 +49,7 @@ public class DataListOptions extends UIListBase<DropdownAssert> implements IsCom
      **/
     @JDIAction("Select '{0}' for '{name}'") @Override
     public void select(int index) {
-        setText(LinqUtils.map(list().elements(index), UIElement::getText).get(index-1));
+        setText(LinqUtils.map(list().elements(index), UIElement::getTextForce).get(index-1));
     }
     /**
     *

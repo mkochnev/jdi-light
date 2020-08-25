@@ -1,7 +1,5 @@
 package com.epam.jdi.light.actions;
 
-import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
-import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.Safe;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,7 +8,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.jdi.light.actions.ActionHelper.*;
@@ -25,7 +22,9 @@ import static com.epam.jdi.tools.LinqUtils.newList;
 @SuppressWarnings("unused")
 @Aspect
 public class ActionProcessor {
-    @Pointcut("execution(* *(..)) && @annotation(com.epam.jdi.light.common.JDIAction)")
+    //com.epam.jdi.light.elements.*.*
+    //@Pointcut("execution(* *(..)) && @annotation(com.epam.jdi.light.common.JDIAction)")
+    @Pointcut("within(com.epam.jdi.light..*) && @annotation(com.epam.jdi.light.common.JDIAction)")
     protected void jdiPointcut() {  }
     @Pointcut("execution(* *(..)) && @annotation(io.qameta.allure.Step)")
     protected void stepPointcut() {  }
