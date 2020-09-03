@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.jdi.light.actions.ActionHelper.*;
@@ -27,7 +28,7 @@ public class ActionProcessor {
     protected void jdiPointcut() {  }
     @Pointcut("execution(* *(..)) && @annotation(io.qameta.allure.Step)")
     protected void stepPointcut() {  }
-    public static Safe<List<ActionObject>> jStack = new Safe<>();
+    public static Safe<List<ActionObject>> jStack = new Safe<>(new ArrayList<>());
 
     @Around("jdiPointcut()")
     public Object jdiAround(ProceedingJoinPoint jp) {
@@ -47,21 +48,10 @@ public class ActionProcessor {
             jInfo.clear();
         }
     }
-    public static ActionObject newInfo(ProceedingJoinPoint jp) {
-        try {
-            ActionObject jInfo = new ActionObject(jp);
-            if (jInfo.topLevel())
-                jStack.set(newList(jInfo));
-            else
-                jStack.get().add(jInfo);
-            return jInfo;
-        } catch (Throwable ex) {
-            throw exception("Failed to init aspect: " + ex.getMessage());
-        }
-    }
 
     @Before("stepPointcut()")
     public void step(JoinPoint jp) {
+        newInfo(jp);
         beforeStepAction(jp);
     }
 }

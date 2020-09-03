@@ -55,8 +55,7 @@ import static com.epam.jdi.light.logger.Strategy.*;
 import static com.epam.jdi.light.settings.JDISettings.*;
 import static com.epam.jdi.light.settings.WebSettings.*;
 import static com.epam.jdi.tools.JsonUtils.beautifyJson;
-import static com.epam.jdi.tools.LinqUtils.filter;
-import static com.epam.jdi.tools.LinqUtils.where;
+import static com.epam.jdi.tools.LinqUtils.*;
 import static com.epam.jdi.tools.PrintUtils.print;
 import static com.epam.jdi.tools.ReflectionUtils.*;
 import static com.epam.jdi.tools.StringUtils.*;
@@ -233,7 +232,7 @@ public class ActionHelper {
         JoinPoint jp = jInfo.jp();
         if (logResult(jp)) {
             LogLevels logLevel = logLevel(jInfo);
-            if (result == null || isInterface(getJpClass(jp), JAssert.class) || isInterface(getJpClass(jStack.get().get(0).jp()), JAssert.class))
+            if (result == null || isInterface(getJpClass(jp), JAssert.class) || isInterface(firstInfo(jInfo).jpClass(), JAssert.class))
                 logger.debug("Done");
             else {
                 String text = result.toString();
@@ -384,7 +383,7 @@ public class ActionHelper {
     }
     static LogLevels logLevel(ActionObject jInfo) {
         LogLevels currentLevel = logLevel(jInfo.jp());
-        LogLevels topLevel = jStack.get().get(0).logLevel();
+        LogLevels topLevel = firstInfo(jInfo).logLevel();
         return currentLevel.equalOrLessThan(topLevel) ? currentLevel : topLevel;
     }
     static LogLevels logLevel(JoinPoint jp) {
@@ -626,5 +625,36 @@ public class ActionHelper {
     static boolean condition(JoinPoint jp) {
         String conditionName = getConditionName(jp);
         return CONDITIONS.has(conditionName) && CONDITIONS.get(conditionName).execute(jp) || !CONDITIONS.has(conditionName) && true;
+    }
+
+    public static ActionObject newInfo(ProceedingJoinPoint jp) {
+        try {
+            return newInfo(new ActionObject(jp));
+        } catch (Throwable ex) {
+            throw exception(ex, "Failed to init pjp aspect: ");
+        }
+    }
+    public static ActionObject newInfo(JoinPoint jp) {
+        try {
+            return newInfo(new ActionObject(jp));
+        } catch (Throwable ex) {
+            throw exception(ex, "Failed to init jp aspect: ");
+        }
+    }
+    public static ActionObject newInfo(ActionObject jInfo) {
+        if (jInfo.topLevel()) {
+            jStack.set(newList(jInfo));
+        }
+        else {
+            jStack.get().add(jInfo);
+        }
+        return jInfo;
+    }
+    public static ActionObject firstInfo(ActionObject jInfo) {
+        try {
+            return jStack.get().get(0);
+        } catch (Exception ignore) {
+            return jInfo;
+        }
     }
 }

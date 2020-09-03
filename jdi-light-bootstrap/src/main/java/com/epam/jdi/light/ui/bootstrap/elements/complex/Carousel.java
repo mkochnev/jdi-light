@@ -63,7 +63,7 @@ public class Carousel<T extends ICoreElement, D> extends UIBaseElement<TextAsser
 		int index = slides.getIndex(name);
 		if (index < 0)
 			throw exception("Can't find slide with name '%s'", name);
-		openSlide(index + 1);
+		openSlide(index);
 	}
 	@JDIAction("Open slide '{0}'")
 	public void openSlide(int index) {

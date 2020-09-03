@@ -6,6 +6,7 @@ import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.elements.common.Label;
 import com.epam.jdi.light.elements.common.UIElement;
+import com.epam.jdi.light.elements.interfaces.base.HasValue;
 import com.epam.jdi.light.elements.interfaces.base.IClickable;
 import com.epam.jdi.light.elements.interfaces.base.ICoreElement;
 import com.epam.jdi.light.elements.interfaces.common.IsText;
@@ -18,16 +19,17 @@ import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.UIUtils.initT;
+import static com.epam.jdi.light.elements.init.UIFactory.$;
 import static com.epam.jdi.light.elements.init.entities.collection.EntitiesCollection.getByType;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
 import static com.epam.jdi.light.settings.JDISettings.ELEMENT;
 import static com.epam.jdi.light.settings.WebSettings.logger;
-import static com.epam.jdi.tools.ReflectionUtils.getGenericTypes;
-import static com.epam.jdi.tools.ReflectionUtils.getValueField;
+import static com.epam.jdi.tools.ReflectionUtils.*;
 
 /**
  * Created by Roman Iovlev on 14.02.2018
@@ -62,7 +64,7 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
 
     @JDIAction(level = DEBUG)
     public List<T> elements(int minAmount) {
-        if (actualMapValue())
+        if (actualMapValue() && values.get().size() >= minAmount)
             return values.get();
         return LinqUtils.map(list().elements(minAmount), this::toT);
     }
@@ -208,25 +210,21 @@ abstract class ListBase<T extends ICoreElement, A extends UISelectAssert<?,?>>
         return list().checked();
     }
 
+    @Override
     public List<String> values() {
-        return list().values();
+        List<T> elements = LinqUtils.map(list().uiElements(0), el -> {
+            UIElement ui = $(el);
+            list().map.get().update(elementTitle(ui), ui);
+            return toT(ui);
+        });
+        return LinqUtils.map(elements, this::printValue);
+    }
+    protected String printValue(T element) {
+        return isInterface(element.getClass(), HasValue.class)
+            ? ((HasValue)element).getValue()
+            : element.toString();
     }
 
-    public List<String> values(TextTypes type) {
-        return list().values(type);
-    }
-
-    public List<String> attrs(String value) {
-        return list().attrs(value);
-    }
-
-    public List<String> listEnabled() {
-        return list().listEnabled();
-    }
-
-    public List<String> listDisabled() {
-        return list().listDisabled();
-    }
     @Override
     public boolean isDisplayed() {
         return list().isDisplayed();

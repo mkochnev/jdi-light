@@ -67,7 +67,7 @@ public class MaterialSelectorUnitTests extends TestsInit {
 
     @Test
     public void valuesTest() {
-        multipleSelect.show();
+        basicMatSelect.show();
         assertEquals(basicMatSelect.values(), Arrays.asList(STEAK, PIZZA, TACOS));
     }
 

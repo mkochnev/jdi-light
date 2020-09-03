@@ -142,7 +142,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         if (minAmount < 0)
             throw exception("uiElements failed. minAmount should be more than 0, but " + minAmount);
         if (isUseCache()) {
-            if (map.hasValue() && map.get().size() > 0 && map.get().size() >= minAmount && isActual(map.get().values().get(0)))
+            if (map.hasValue() && map.get().size() > 0 && map.get().size() >= minAmount && isActualMap())
                 return LinqUtils.select(map.get().values(), el -> el.get());
             if (webElements.hasValue() && webElements.get().size() > 0 && webElements.get().size() >= minAmount && isActual(webElements.get().get(0)))
                 return webElements.get();
@@ -183,8 +183,11 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
 
     protected boolean hasKey(String value) {
         if (map.hasValue() && any(map.get().keys(), key -> namesEqual(key, value)))
-            return isActual(map.get().get(value));
+            return isActual(getByKey(value));
         return false;
+    }
+    protected UIElement getByKey(String value) {
+        return map.get().first((key,v) -> namesEqual(key, value)).value;
     }
     /**
      * @param value
@@ -192,7 +195,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
     @JDIAction(level = DEBUG) @Override
     public UIElement get(String value) {
         return hasKey(value)
-            ? map.get().get(value)
+            ? getByKey(value)
             : getUIElement(value);
     }
     public UIElement getFast(String value) {
@@ -273,7 +276,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
             throw exception("Can't get element with index '%s'. Index should be %s or more", index, startIndex);
         int getIndex = index - startIndex;
         if (locator.isNull() && isUseCache()) {
-            if (map.hasValue() && map.get().size() > 0 && map.get().size() >= getIndex && isActual(map.get().values().get(0)))
+            if (map.hasValue() && map.get().size() > 0 && map.get().size() >= getIndex && isActualMap())
                 return map.get().values().get(getIndex);
             if (webElements.hasValue() && webElements.get().size() > 0 && webElements.get().size() >= getIndex && isActual(webElements.get().get(0)))
                 return $(webElements.get().get(getIndex));
@@ -527,7 +530,7 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         List<String> values;
         WebList elements;
         if (isUseCache()) {
-            if (map.hasValue() && map.get().size() > 0 && isActual(map.get().values().get(0)))
+            if (map.hasValue() && map.get().size() > 0 && isActualMap())
                 return map.get().keys();
             if (webElements.hasValue() && webElements.get().size() > 0 && isActual(webElements.get().get(0))) {
                 values = LinqUtils.map(webElements.get(), element -> $(element).text(textType));
@@ -627,7 +630,9 @@ public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISel
         return is(condition);
     }
     //endregion
-
+    public boolean isActualMap() {
+        return isActual(map.get().values().get(0));
+    }
     protected boolean isActual(WebElement element) {
         try {
             if (isClass(element.getClass(), UIElement.class))
