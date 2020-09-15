@@ -10,12 +10,15 @@ import io.github.com.custom.IconWithBadge;
 
 public class BadgeSection extends Section {
 
-    @UI("#text-with-badge span")
-    public static Badge badgeWithText;
-    public static ButtonWithBadge textWithBadge;
-    public static IconWithBadge iconWithBadge;
     @UI("#text-with-badge")
     public static Button textButton;
+    @UI("#text-with-badge span")
+    public static Badge badgeWithText;
+
+
+    public static ButtonWithBadge textWithBadge;
+    public static IconWithBadge iconWithBadge;
+
 
     @UI("#button-with-left-badge")
     public static Button buttonWithBadge;

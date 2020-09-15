@@ -1,5 +1,6 @@
 package com.epam.jdi.light.angular.elements.common;
 
+import com.epam.jdi.light.asserts.generic.UIAssert;
 import com.epam.jdi.light.elements.base.UIBaseElement;
 import com.epam.jdi.light.ui.html.asserts.ProgressAssert;
 
@@ -8,6 +9,6 @@ import com.epam.jdi.light.ui.html.asserts.ProgressAssert;
  */
 
 // REMOVE element. Use Spinner as in bootstrap
-public class ProgressSpinner extends UIBaseElement<ProgressAssert> {
+public class ProgressSpinner extends UIBaseElement<UIAssert<?, ProgressSpinner>> {
 
 }
