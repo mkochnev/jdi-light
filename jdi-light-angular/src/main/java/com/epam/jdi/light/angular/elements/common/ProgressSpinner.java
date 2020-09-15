@@ -7,5 +7,7 @@ import com.epam.jdi.light.ui.html.asserts.ProgressAssert;
  * To see an example of ProgressSpinner web element please visit https://material.angular.io/components/progress-spinner/overview.
  */
 
+// REMOVE element. Use Spinner as in bootstrap
 public class ProgressSpinner extends UIBaseElement<ProgressAssert> {
+
 }

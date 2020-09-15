@@ -18,6 +18,7 @@ public class CheckboxTests extends TestsInit {
 
     @Test
     public void basicCheckboxTest() {
+        // Not so basic?
         basicCheckbox.isDisplayed();
         basicCheckbox.check();
         basicCheckbox.isSelected();
