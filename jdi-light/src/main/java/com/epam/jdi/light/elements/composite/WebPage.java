@@ -523,17 +523,7 @@ public class WebPage extends DriverBase implements PageObject {
             visualWindowCheck();
         }
         if (LOGS.screenStrategy.contains(NEW_PAGE)) {
-            String screenName = takeScreen(page.getName());
-            String detailsUUID = AllureLogger.startStep(page.getName());
-            if (isNotBlank(screenName)) {
-                try {
-                    attachScreenshot(screenName);
-                } catch (IOException ex) {
-                    throw exception(ex, "");
-                }
-            }
-            getLifecycle().stopStep(detailsUUID);
-
+            AllureLogger.screenshotStep(page.getName(), false);
         }
         logger.toLog("Page '" + page.getName() + "' opened");
         TIMEOUTS.element.set(TIMEOUTS.page.get());

@@ -83,11 +83,18 @@ public class ActionObject {
     private CacheValue<Integer> timeout = new CacheValue<>(this::getTimeout);
     private int getTimeout() {
         JDIAction ja = jp() != null
-            ? getJdiAction(jp())
+            ? jdiAnnotation()
             : null;
         return ja != null && ja.timeout() != -1
             ? ja.timeout()
             : elementTimeout;
+    }
+    public JDIAction jdiAnnotation() {
+        return getJdiAction(jp());
+    }
+    public boolean isAssertAnnotation() {
+        JDIAction ja = getJdiAction(jp());
+        return ja != null && ja.isAssert();
     }
 
     private void resetElementTimeout() {

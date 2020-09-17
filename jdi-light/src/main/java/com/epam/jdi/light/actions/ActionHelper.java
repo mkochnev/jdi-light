@@ -29,7 +29,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.logging.LogEntry;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +63,6 @@ import static com.epam.jdi.tools.map.MapArray.IGNORE_NOT_UNIQUE;
 import static com.epam.jdi.tools.map.MapArray.map;
 import static com.epam.jdi.tools.pairs.Pair.$;
 import static com.epam.jdi.tools.switcher.SwitchActions.*;
-import static io.qameta.allure.aspects.StepsAspects.getLifecycle;
 import static java.lang.Character.toUpperCase;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -171,26 +169,11 @@ public class ActionHelper {
         isAssert.set(true);
         if (lastActionIsNotAssert) {
             String screenName = "Validate" + capitalize(jInfo.methodName());
-            String screenPath;
-            if (!validateAlert(jInfo)) {
-                screenPath = takeScreen(screenName);
-            } else {
-                Timer.sleep(200);
-                screenPath = takeRobotScreenshot(screenName);
-            }
-            String detailsUUID = startStep(screenName);
-            if (isNotBlank(screenPath)) {
-                try {
-                    attachScreenshot(screenPath);
-                } catch (IOException ex) {
-                    throw exception(ex, "");
-                }
-            }
-            getLifecycle().stopStep(detailsUUID);
+            screenshotStep(screenName, validateAlert(jInfo));
         }
     }
-    private static boolean validateAlert(ActionObject jInfo) {
-        return isClass(jInfo.jpClass(), Alerts.class) && jInfo.methodName().startsWith("validate");
+    public static boolean validateAlert(ActionObject jInfo) {
+        return isClass(jInfo.jpClass(), Alerts.class) && jInfo.isAssertAnnotation();
     }
     public static void beforeStepAction(JoinPoint jp) {
         String message = TRANSFORM_LOG_STRING.execute(getBeforeLogString(jp));
