@@ -13,7 +13,7 @@ import io.github.com.entities.Contacts;
 import java.lang.reflect.Field;
 
 public class ContactFormCustomGet extends Form<Contacts> {
-    TextField name;
+    TextField firstName;
     TextField lastName, position, passportNumber, passportSeria;
 
     Dropdown gender;

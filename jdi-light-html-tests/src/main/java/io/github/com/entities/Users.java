@@ -6,7 +6,7 @@ public class Users {
 
     private static Contacts defaultContact() {
         return new Contacts().set(c -> {
-            c.name = "Roman";
+            c.firstName = "Roman";
             c.lastName = "Iovlev";
             c.position = "ChiefQA";
             //c.passport = true;

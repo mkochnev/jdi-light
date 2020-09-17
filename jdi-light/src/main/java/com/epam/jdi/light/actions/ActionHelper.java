@@ -173,7 +173,7 @@ public class ActionHelper {
         }
     }
     public static boolean validateAlert(ActionObject jInfo) {
-        return isClass(jInfo.jpClass(), Alerts.class) && jInfo.isAssertAnnotation();
+        return jInfo.isAssertAnnotation();
     }
     public static void beforeStepAction(JoinPoint jp) {
         String message = TRANSFORM_LOG_STRING.execute(getBeforeLogString(jp));

@@ -1,13 +1,11 @@
 package com.epam.jdi.light.logger;
 
-import com.epam.jdi.light.actions.ActionObject;
 import com.epam.jdi.tools.Timer;
 import io.qameta.allure.model.StepResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import static com.epam.jdi.light.actions.ActionHelper.validateAlert;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.driver.ScreenshotMaker.takeRobotScreenshot;
 import static com.epam.jdi.light.driver.ScreenshotMaker.takeScreen;
