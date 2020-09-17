@@ -65,9 +65,6 @@ public class AllureLogger {
     public static void failStep(String uuid, String screenPath, String htmlSnapshot, String requests) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
-        getLifecycle().updateStep(uuid, s -> s.setStatus(FAILED));
-        getLifecycle().stopStep(uuid);
-
         if (isNotBlank(screenPath) || isNotBlank(htmlSnapshot) || isNotBlank(requests)) {
             String detailsUUID = AllureLogger.startStep("Failure details");
             try {

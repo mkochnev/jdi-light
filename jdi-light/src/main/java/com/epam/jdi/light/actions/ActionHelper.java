@@ -66,6 +66,7 @@ import static com.epam.jdi.tools.map.MapArray.IGNORE_NOT_UNIQUE;
 import static com.epam.jdi.tools.map.MapArray.map;
 import static com.epam.jdi.tools.pairs.Pair.$;
 import static com.epam.jdi.tools.switcher.SwitchActions.*;
+import static io.qameta.allure.aspects.StepsAspects.getLifecycle;
 import static java.lang.Character.toUpperCase;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -319,6 +320,9 @@ public class ActionHelper {
                 logger.error("Url: " + WebPage.getUrl());
             } catch (Exception ignore) { }
             logger.error("Failed actions chain: " + print(chainActions, " > "));
+        } else {
+            if (LOGS.writeToAllure && isNotBlank(jInfo.stepUId))
+                getLifecycle().stopStep(jInfo.stepUId);
         }
         return exception(ex, getExceptionAround(ex, jInfo));
     }
