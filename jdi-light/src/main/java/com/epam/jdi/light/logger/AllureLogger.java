@@ -28,9 +28,9 @@ public class AllureLogger {
     public static AttachmentStrategy HTML_CODE_LOGGING = ON_FAIL;
 
     public static void screenshotStep(String screenName, boolean isNativeAlert) {
-        // String detailsUUID = AllureLogger.startStep(screenName);
+        String detailsUUID = AllureLogger.startStep(screenName);
         createAttachment(screenName, isNativeAlert);
-        // getLifecycle().stopStep(detailsUUID);
+        getLifecycle().stopStep(detailsUUID);
     }
     public static void createAttachment(String screenName, boolean isNativeAlert) {
         String screenPath;
@@ -62,24 +62,29 @@ public class AllureLogger {
         return "";
     }
 
-    public static void failStep(String uuid, String screenName, String htmlSnapshot, String requests) {
+    public static void failStep(String uuid, String screenPath, String htmlSnapshot, String requests) {
         if (!LOGS.writeToAllure || isBlank(uuid)) return;
 
         getLifecycle().updateStep(uuid, s -> s.setStatus(FAILED));
         getLifecycle().stopStep(uuid);
 
-        if (isNotBlank(screenName) || isNotBlank(htmlSnapshot) || isNotBlank(requests)) {
+        if (isNotBlank(screenPath) || isNotBlank(htmlSnapshot) || isNotBlank(requests)) {
             String detailsUUID = AllureLogger.startStep("Failure details");
-            if (isNotBlank(screenName)) {
-                createAttachment(screenName, false);
+            try {
+                if (isNotBlank(screenPath)) {
+                    attachScreenshot(screenPath);
+                }
+                if (isNotBlank(htmlSnapshot)) {
+                    attachText("HTML Code Snapshot", "text/html", htmlSnapshot);
+                }
+                if (isNotBlank(requests)) {
+                    attachText("HTTP Requests", "text/plain", requests);
+                }
+            } catch (Exception ex) {
+                throw exception(ex, "Failed to add attachments to Allure step");
+            } finally {
+                getLifecycle().stopStep(detailsUUID);
             }
-            if (isNotBlank(htmlSnapshot)) {
-                attachText("HTML Code Snapshot", "text/html", htmlSnapshot);
-            }
-            if (isNotBlank(requests)) {
-                attachText("HTTP Requests", "text/plain", requests);
-            }
-            getLifecycle().stopStep(detailsUUID);
         }
     }
 

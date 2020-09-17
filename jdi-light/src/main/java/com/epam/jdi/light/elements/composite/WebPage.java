@@ -313,7 +313,7 @@ public class WebPage extends DriverBase implements PageObject {
     /**
      * Reload current page
      */
-    @JDIAction("Reload current page")
+    @JDIAction(value = "Reload current page", isAssert = true)
     public static void refresh() {
         getDriver().navigate().refresh();
     }
@@ -523,13 +523,13 @@ public class WebPage extends DriverBase implements PageObject {
             visualWindowCheck();
         }
         if (LOGS.screenStrategy.contains(NEW_PAGE)) {
-            AllureLogger.screenshotStep(page.getName(), false);
+            AllureLogger.createAttachment(page.getName(), false);
         }
         logger.toLog("Page '" + page.getName() + "' opened");
         TIMEOUTS.element.set(TIMEOUTS.page.get());
     }
 
-    public static void beforeThisPage(WebPage page) {
+    public static void beforeEachPage(WebPage page) {
         if (PAGE.checkPageOpen != PageChecks.NONE) {
             page.checkOpened();
         }

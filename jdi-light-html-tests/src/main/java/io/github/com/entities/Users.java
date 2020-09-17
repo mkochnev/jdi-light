@@ -21,13 +21,13 @@ public class Users {
     public static Contacts DEFAULT_CONTACT = defaultContact();
 
     public static Contacts LOWER_CASE_NAME_CONTACT =
-        defaultContact().set(c-> c.name = c.name.toLowerCase());
+        defaultContact().set(c-> c.firstName = c.firstName.toLowerCase());
     public static Contacts UPPER_CASE_NAME_CONTACT =
-        defaultContact().set(c-> c.name = c.name.toUpperCase());
+        defaultContact().set(c-> c.firstName = c.firstName.toUpperCase());
 
     public static Contacts ONLY_NAME_FILLED_DEFAULT_CONTACT =
-        new Contacts().set(c -> c.name = "Roman");
+        new Contacts().set(c -> c.firstName = "Roman");
 
     public static Contacts ALL_EXCEPT_NAME_FILLED_DEFAULT_CONTACT =
-        defaultContact().set(c -> c.name = null);
+        defaultContact().set(c -> c.firstName = null);
 }
