@@ -31,7 +31,6 @@ public class FormContactsTests implements TestsInit {
     public void fillContactFormTest() {
         main.contactForm.description.getText();
         main.contactForm.fill(DEFAULT_CONTACT);
-        DEFAULT_CONTACT.passportSeria = "Changed";
         main.contactForm.check(DEFAULT_CONTACT);
     }
 
