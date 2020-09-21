@@ -45,4 +45,5 @@ public class AngularPage extends WebPage {
     public static DividerSection dividerSection;
     public static DatepickerSection datepickerSection;
     public static ExpansionPanelSection expansionPanelSection;
+    public static StepperSection stepperSection;
 }
