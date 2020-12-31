@@ -13,5 +13,6 @@ public class User extends DataClass<User> {
     public String passportSeria;
     public String description;
     public String gender;
-    public String religion, weather;
+    public String religion;
+    public String weather;
 }
