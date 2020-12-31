@@ -15,7 +15,8 @@ public class Contacts extends DataClass<Contacts> {
     public String description;
     @Order(2)
     public String gender;
-    public String religion, weather;
+    public String religion;
+    public String weather;
     @Order(3)
     public boolean passport;
 }
