@@ -29,3 +29,6 @@ jobs:
       run: |
         echo ------------------- WELCOME TO JDI ----------------------
         mvn --version
+
+    - name: Compile jdi code
+      run: mvn install -DskipTests
