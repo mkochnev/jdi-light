@@ -4,7 +4,7 @@
 name: Java CI with Maven
 env:
     CHROME_PROPERTIES: "chrome.properties"
-    WITH_PARAMS: "-Ddriver=chrome -Dchrome.capabilities.path=$CHROME_PROPERTIES" #add -ntp when maven will be >=3.6.1 on travis
+    WITH_PARAMS: "-ntp -Ddriver=chrome -Dchrome.capabilities.path=$CHROME_PROPERTIES" #add -ntp when maven will be >=3.6.1 on travis
     UNIT: "-Punit"
     COMMON: "-Pcommon"
     COMPLEX: "-Pcomplex"
@@ -30,22 +30,23 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     java: [8,9,10,11,12,13]
+    strategy:
+      matrix:
+        java: [8,9]
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
       uses: actions/setup-java@v1
       with:
-        java-version: 8
+        java-version: ${{ matrix.java }}
         java-package: jdk
     - name: Prepare environment
       run: |
         java -Xmx32m -version
         ls -lah
         google-chrome-stable --version
+        env
           
     - name: Welcome to JDI
       run: |
