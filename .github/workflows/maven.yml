@@ -28,9 +28,4 @@ jobs:
     - name: Welcome to JDI
       run: |
         echo ------------------- WELCOME TO JDI ----------------------
-        mvm --version
-
-    # - name: Welcome to JDI
-    #   run: |       
-    #     - echo ------------------- WELCOME TO JDI ----------------------
-    #     - 
+        mvn --version
