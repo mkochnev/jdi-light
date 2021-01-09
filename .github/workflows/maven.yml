@@ -20,9 +20,9 @@ jobs:
         java-version: 8
         java-package: jdk
     - name: Build with Maven
-      run: sudo apt-get -y install jq
-    #       - java -Xmx32m -version
-    #       - ls -lah
+      run: |
+          - java -Xmx32m -version
+          - ls -lah
     #       - google-chrome-stable --version
     # - name: Welcome to JDI
     #   run: |       
