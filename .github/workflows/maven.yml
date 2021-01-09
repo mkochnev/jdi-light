@@ -56,8 +56,14 @@ jobs:
     - name: Compile jdi code
       run: mvn install -DskipTests
 
-    - name: First test
+    # - name: Tests BDD
+    #   run: |
+    #       mvn -ntp install -DskipTests
+    #       echo arguments=$CHROME_ARGS > "./$BDD_TESTS/src/test/resources/$CHROME_PROPERTIES"
+    #       mvn verify $WITH_PARAMS -pl $GROUP_ID:$BDD_TESTS
+    
+    - name: Tests bootstrap
       run: |
           mvn -ntp install -DskipTests
-          echo arguments=$CHROME_ARGS > "./$BDD_TESTS/src/test/resources/$CHROME_PROPERTIES"
-          mvn verify $WITH_PARAMS -pl $GROUP_ID:$BDD_TESTS
+          echo arguments=$CHROME_ARGS > "./$BOOTSTRAP_TESTS/src/test/resources/$CHROME_PROPERTIES"
+          mvn verify $WITH_PARAMS -pl $GROUP_ID:$BOOTSTRAP_TESTS
