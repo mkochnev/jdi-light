@@ -2,7 +2,26 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
 name: Java CI with Maven
-
+env:
+    CHROME_PROPERTIES: "chrome.properties"
+    WITH_PARAMS: "-Ddriver=chrome -Dchrome.capabilities.path=$CHROME_PROPERTIES" #add -ntp when maven will be >=3.6.1 on travis
+    UNIT: "-Punit"
+    COMMON: "-Pcommon"
+    COMPLEX: "-Pcomplex"
+    GROUP_ID: "com.epam.jdi"
+    NOPO_TESTS: "jdi-bdd-no-po-tests"
+    NOPO_TESTS_PROPERTY: "test-examples/jdi-bdd-no-po-tests"
+    BDD_TESTS: "jdi-bdd-tests"
+    BOOTSTRAP_TESTS: "jdi-light-bootstrap-tests"
+    HTML_TESTS: "jdi-light-html-tests"
+    ANGULAR_TESTS: "jdi-light-angular-tests"
+    ANGULAR_TESTS_WITH_MOCKS: "jdi-light-angular-tests-with-mocks"
+    EXAMPLES: "jdi-light-examples"
+    EXAMPLES_PROPERTY: "test-examples/jdi-light-examples"
+    PERFORMANCE: "jdi-performance"
+    PERFORMANCE_PROPERTY: "test-examples/jdi-performance"
+    CHROME_ARGS: "--headless --window-size=1920,1080"
+    PATH: "$JAVA_HOME/bin:$PATH"
 on:
   push:
     branches: [ test-ga ]
@@ -11,6 +30,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8,9,10,11,12,13]
 
     steps:
     - uses: actions/checkout@v2
@@ -32,3 +54,9 @@ jobs:
 
     - name: Compile jdi code
       run: mvn install -DskipTests
+
+    - name: First test
+      run: |
+          mvn -ntp install -DskipTests
+          echo arguments=$CHROME_ARGS > "./$BDD_TESTS/src/test/resources/$CHROME_PROPERTIES"
+          mvn verify $WITH_PARAMS -pl $GROUP_ID:$BDD_TESTS
