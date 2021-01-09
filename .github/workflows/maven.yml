@@ -21,7 +21,7 @@ env:
     PERFORMANCE: "jdi-performance"
     PERFORMANCE_PROPERTY: "test-examples/jdi-performance"
     CHROME_ARGS: "--headless --window-size=1920,1080"
-    PATH: "$JAVA_HOME/bin:$PATH"
+#    PATH: "$JAVA_HOME/bin:$PATH"
 on:
   push:
     branches: [ test-ga ]
