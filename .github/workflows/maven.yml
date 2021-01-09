@@ -19,12 +19,18 @@ jobs:
       with:
         java-version: 8
         java-package: jdk
-    - name: Build with Maven
+    - name: Prepare environment
       run: |
-          java -Xmx32m -version
-          ls -lah
-    #       - google-chrome-stable --version
+        java -Xmx32m -version
+        ls -lah
+        google-chrome-stable --version
+          
+    - name: Welcome to JDI
+      run: |
+        echo ------------------- WELCOME TO JDI ----------------------
+        mvm --version
+
     # - name: Welcome to JDI
     #   run: |       
     #     - echo ------------------- WELCOME TO JDI ----------------------
-    #     - mvn --version
+    #     - 
