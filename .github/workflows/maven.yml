@@ -62,8 +62,14 @@ jobs:
     #       echo arguments=$CHROME_ARGS > "./$BDD_TESTS/src/test/resources/$CHROME_PROPERTIES"
     #       mvn verify $WITH_PARAMS -pl $GROUP_ID:$BDD_TESTS
     
-    - name: Tests bootstrap
-      run: |
+    # - name: Tests bootstrap
+    #   run: |
+    #       mvn -ntp install -DskipTests
+    #       echo arguments=$CHROME_ARGS > "./$BOOTSTRAP_TESTS/src/test/resources/$CHROME_PROPERTIES"
+    #       mvn verify $WITH_PARAMS -pl $GROUP_ID:$BOOTSTRAP_TESTS
+
+    - name: Run tests - angular unit tests
+      run: | 
           mvn -ntp install -DskipTests
-          echo arguments=$CHROME_ARGS > "./$BOOTSTRAP_TESTS/src/test/resources/$CHROME_PROPERTIES"
-          mvn verify $WITH_PARAMS -pl $GROUP_ID:$BOOTSTRAP_TESTS
+          echo arguments=$CHROME_ARGS > "./$ANGULAR_TESTS/src/test/resources/$CHROME_PROPERTIES"
+          mvn verify $WITH_PARAMS $UNIT -pl $GROUP_ID:$ANGULAR_TESTS 
