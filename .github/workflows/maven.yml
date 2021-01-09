@@ -21,8 +21,8 @@ jobs:
         java-package: jdk
     - name: Build with Maven
       run: |
-          - java -Xmx32m -version
-          - ls -lah
+          java -Xmx32m -version
+          ls -lah
     #       - google-chrome-stable --version
     # - name: Welcome to JDI
     #   run: |       
